@@ -1,0 +1,94 @@
+#
+# $Id$
+#
+
+# General info
+SHELL       = @SHELL@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+bindir      = @bindir@
+libdir      = @libdir@
+VPATH       = $(srcdir)
+
+# These may be overridden by make invocators
+DESTDIR        =
+GOSH           = @GOSH@
+GAUCHE_CONFIG  = @GAUCHE_CONFIG@
+GAUCHE_PACKAGE = @GAUCHE_PACKAGE@
+INSTALL        = @GAUCHE_INSTALL@
+
+# Other parameters
+SOEXT  = @SOEXT@
+OBJEXT = @OBJEXT@
+EXEEXT = @EXEEXT@
+
+# Module-specific stuff
+PACKAGE   = Gauche-gd
+
+ARCHFILES = graphics_gd.$(SOEXT)
+SCMFILES  = graphics/gd.scm
+HEADERS   = graphics_gd.h graphics_gd.types
+
+TARGET    = $(ARCHFILES)
+GENERATED = 
+CONFIG_GENERATED = Makefile config.cache config.log config.status
+TEST_GENERATED = test.log test/screen-thumb.png test/screen-thumb.gif test/im0.png test/im10.gif test/im1.png test/im1.gif
+
+HEADER_INSTALL_DIR  = $(DESTDIR)`$(GAUCHE_CONFIG) --siteincdir`
+SCM_INSTALL_DIR     = $(DESTDIR)`$(GAUCHE_CONFIG) --sitelibdir`
+ARCH_INSTALL_DIR    = $(DESTDIR)`$(GAUCHE_CONFIG) --sitearchdir`
+
+CPPFLAGS = @CPPFLAGS@ @GDLIB_CPPFLAGS@
+CFLAGS   = @CFLAGS@ @GDLIB_CFLAGS@
+LDFLAGS  = @LDFLAGS@ @GDLIB_LDFLAGS@
+LIBS     = @LIBS@ @GDLIB_LIBS@ -lgd
+
+graphics_gd_SRCS = graphics_gd.c graphics_gdlib.stub
+
+all : $(TARGET)
+
+graphics_gd.$(SOEXT): $(graphics_gd_SRCS)
+	$(GAUCHE_PACKAGE) compile --verbose \
+		--cppflags='$(CPPFLAGS)' \
+		--cflags='$(CFLAGS)' \
+		--ldflags='$(LDFLAGS)' \
+		--libs='$(LIBS)' \
+		graphics_gd $(graphics_gd_SRCS)
+
+check : all test.scm
+	@rm -f test.log
+	$(GOSH) -I. test.scm > test.log
+
+install : all
+	$(INSTALL) -m 444 -T $(HEADER_INSTALL_DIR) $(HEADERS)
+	$(INSTALL) -m 444 -T $(SCM_INSTALL_DIR) $(SCMFILES) 
+	$(INSTALL) -m 555 -T $(ARCH_INSTALL_DIR) $(ARCHFILES)
+	$(INSTALL) -m 444 -T $(SCM_INSTALL_DIR)/.packages $(PACKAGE).gpd
+
+uninstall :
+	$(INSTALL) -U $(HEADER_INSTALL_DIR) $(HEADERS)
+	$(INSTALL) -U $(SCM_INSTALL_DIR) $(SCMFILES) 
+	$(INSTALL) -U $(ARCH_INSTALL_DIR) $(ARCHFILES)
+	$(INSTALL) -m 444 -T $(SCM_INSTALL_DIR)/.packages $(PACKAGE).gpd
+
+clean :
+	cd doc && $(MAKE) clean
+	cd example && $(MAKE) clean
+	$(GAUCHE_PACKAGE) compile --clean graphics_gd $(graphics_gd_SRCS)
+	rm -rf core *~ $(TARGET) $(GENERATED) $(TEST_GENERATED) so_locations
+
+distclean : clean
+	cd doc && $(MAKE) distclean
+	cd example && $(MAKE) distclean
+	rm -rf $(CONFIG_GENERATED)
+
+maintainer-clean : clean
+	cd doc && $(MAKE) maintainer-clean
+	cd example && $(MAKE) maintainer-clean
+	rm -rf $(CONFIG_GENERATED) configure
+
+doc : all
+	cd doc && $(MAKE) doc
+
+example: all
+	cd example && $(MAKE) example

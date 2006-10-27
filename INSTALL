@@ -1,0 +1,29 @@
+Basic
+=====
+
+It is necessary to:
+- use gauche 0.8.7 or later
+- have been installed the gd2 library
+
+It is recommended to:
+- have gdlib-config in PATH
+
+
+Command lines
+=============
+
+$ ./configure
+$ make
+# make install
+
+
+Distribution Specific
+=====================
+
+* Debian (sarge)
+If you do not have the gd2 library, then:
+# apt-get install libgd2-dev
+
+* Fedora Core 5
+If you do not have the gd2 library, then:
+# yum install gd-devel

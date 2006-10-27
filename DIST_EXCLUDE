@@ -1,0 +1,5 @@
+DIST_EXCLUDE
+Gauche-gd.gpd
+autom4te.cache
+gauche-gd
+recompile.sh

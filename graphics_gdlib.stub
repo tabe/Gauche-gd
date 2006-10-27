@@ -1,0 +1,351 @@
+;;;
+;;;  graphics_gdlib.stub
+;;;
+;;;   Copyright (c) 2006 Takeshi Abe. All rights reserved.
+;;;
+;;;   Redistribution and use in source and binary forms, with or without
+;;;   modification, are permitted provided that the following conditions
+;;;   are met:
+;;;
+;;;    1. Redistributions of source code must retain the above copyright
+;;;       notice, this list of conditions and the following disclaimer.
+;;;
+;;;    2. Redistributions in binary form must reproduce the above copyright
+;;;       notice, this list of conditions and the following disclaimer in the
+;;;       documentation and/or other materials provided with the distribution.
+;;;
+;;;    3. Neither the name of the authors nor the names of its contributors
+;;;       may be used to endorse or promote products derived from this
+;;;       software without specific prior written permission.
+;;;
+;;;   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+;;;   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+;;;   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+;;;   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+;;;   OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+;;;   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+;;;   TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+;;;   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+;;;   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+;;;   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;;;   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;;;  
+;;;  $Id$
+
+"#include \"graphics_gd.h\""
+
+(include "graphics_gd.types")
+
+(define-enum gdMaxColors)
+
+(define-enum gdAlphaMax)
+(define-enum gdAlphaOpaque)
+(define-enum gdAlphaTransparent)
+(define-enum gdRedMax)
+(define-enum gdGreenMax)
+(define-enum gdBlueMax)
+
+(define-cproc gd-true-color-get-alpha (c::<int32>)
+  (call <fixnum> "gdTrueColorGetAlpha"))
+(define-cproc gd-true-color-get-red (c::<int32>)
+  (call <fixnum> "gdTrueColorGetRed"))
+(define-cproc gd-true-color-get-green (c::<int32>)
+  (call <fixnum> "gdTrueColorGetGreen"))
+(define-cproc gd-true-color-get-blue (c::<int32>)
+  (call <fixnum> "gdTrueColorGetBlue"))
+
+(define-cproc gd-alpha-blend (dest::<int32> src::<int32>)
+  (call <int32> "gdAlphaBlend"))
+
+(define-enum gdStyled)
+(define-enum gdBrushed)
+(define-enum gdStyledBrushed)
+(define-enum gdTiled)
+(define-enum gdTransparent)
+(define-enum gdAntiAliased)
+
+(define-cproc gd-image-create (sx::<fixnum> sy::<fixnum>)
+  (call <gd-image> "gdImageCreate"))
+(define-cproc gd-image-create-palette (sx::<fixnum> sy::<fixnum>)
+  (call <gd-image> "gdImageCreatePalette"))
+(define-cproc gd-image-create-true-color (sx::<fixnum> sy::<fixnum>)
+  (call <gd-image> "gdImageCreateTrueColor"))
+
+(define-cproc gd-image-create-from-png (path::<const-cstring>)
+  (body <gd-image> "graphicsGdImageCreateFromPng(&SCM_RESULT, path);"))
+(define-cproc gd-image-create-from-gif (path::<const-cstring>)
+  (body <gd-image> "graphicsGdImageCreateFromGif(&SCM_RESULT, path);"))
+(define-cproc gd-image-create-from-wbmp (path::<const-cstring>)
+  (body <gd-image> "graphicsGdImageCreateFromWBMP(&SCM_RESULT, path);"))
+(define-cproc gd-image-create-from-jpeg (path::<const-cstring>)
+  (body <gd-image> "graphicsGdImageCreateFromJpeg(&SCM_RESULT, path);"))
+(define-cproc gd-image-create-from-gd (path::<const-cstring>)
+  (body <gd-image> "graphicsGdImageCreateFromGd(&SCM_RESULT, path);"))
+(define-cproc gd-image-create-from-gd2 (path::<const-cstring>)
+  (body <gd-image> "graphicsGdImageCreateFromGd2(&SCM_RESULT, path);"))
+(define-cproc gd-image-create-from-xpm (path::<const-cstring>)
+  (body <gd-image> "graphicsGdImageCreateFromXpm(&SCM_RESULT, path);"))
+
+(define-cproc gd-image-destroy (im::<gd-image>)
+  (body <void>
+		"if (!graphicsGdImageDestroyedP(im_scm)) {"
+		"  graphicsGdImageMarkDestroyed(im_scm);"
+		"  gdImageDestroy(im);"
+		"}"
+		))
+
+(define-cproc gd-image-set-pixel (im::<gd-image> x::<fixnum> y::<fixnum> color::<int32>)
+  (call <void> "gdImageSetPixel"))
+(define-cproc gd-image-get-pixel (im::<gd-image> x::<fixnum> y::<fixnum>)
+  (call <fixnum> "gdImageGetPixel"))
+(define-cproc gd-image-get-true-color-pixel (im::<gd-image> x::<fixnum> y::<fixnum>)
+  (call <int32> "gdImageGetTrueColorPixel"))
+
+(define-cproc gd-image-line (im::<gd-image> x1::<fixnum> y1::<fixnum> x2::<fixnum> y2::<fixnum> color::<int32>)
+  (call <void> "gdImageLine"))
+; `For backwards compatibility only.
+; (define-cproc gd-image-dashed-line (im::<gd-image> x1::<fixnum> y1::<fixnum> x2::<fixnum> y2::<fixnum> color::<int32>)
+;   (call <void> "gdImageDashedLine"))
+(define-cproc gd-image-rectangle (im::<gd-image> x1::<fixnum> y1::<fixnum> x2::<fixnum> y2::<fixnum> color::<int32>)
+  (call <void> "gdImageRectangle"))
+(define-cproc gd-image-filled-rectangle (im::<gd-image> x1::<fixnum> y1::<fixnum> x2::<fixnum> y2::<fixnum> color::<int32>)
+  (call <void> "gdImageFilledRectangle"))
+(define-cproc gd-image-set-clip (im::<gd-image> x1::<fixnum> y1::<fixnum> x2::<fixnum> y2::<fixnum>)
+  (call <void> "gdImageSetClip"))
+(define-cproc gd-image-get-clip (im::<gd-image>)
+  (body (<fixnum> <fixnum> <fixnum> <fixnum>)
+		"gdImageGetClip(im, &SCM_RESULT0, &SCM_RESULT1, &SCM_RESULT2, &SCM_RESULT3);"))
+(define-cproc gd-image-bounds-safe (im::<gd-image> x::<fixnum> y::<fixnum>)
+  (call <fixnum> "gdImageBoundsSafe"))
+(define-cproc gd-image-char (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> c::<int32> color::<int32>)
+  (call <void> "gdImageChar"))
+(define-cproc gd-image-char-up (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> c::<int32> color::<int32>)
+  (call <void> "gdImageCharUp"))
+; (define-cproc gd-image-string (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> s::<const-cstring> color::<int32>)
+;   (call <void> "gdImageString"))
+; (define-cproc gd-image-string-up (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> s::<const-cstring> color::<int32>)
+;   (call <void> "gdImageStringUp"))
+; (define-cproc gd-image-string-16 (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> s::<const-cstring> color::<int32>)
+;   (call <void> "gdImageString16"))
+; (define-cproc gd-image-string-16-up (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> s::<const-cstring> color::<int32>)
+;   (call <void> "gdImageString16Up"))
+
+(define-cproc gd-font-cache-setup ()
+  (call <fixnum> "gdFontCacheSetup"))
+(define-cproc gd-font-cache-shutdown ()
+  (call <void> "gdFontCacheShutdown"))
+; /* 2.0.20: for backwards compatibility. A few applications did start calling
+;  this function when it first appeared although it was never documented.
+;  Simply invokes gdFontCacheShutdown. */
+(define-cproc gd-free-font-cache ()
+  (call <void> "gdFreeFontCache"))
+
+; /* Calls gdImageStringFT. Provided for backwards compatibility only. */
+; BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist, ...
+
+; /* FreeType 2 text output */
+; BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist, ...
+
+(define-enum gdFTEX_LINESPACE)
+(define-enum gdFTEX_CHARMAP)
+(define-enum gdFTEX_RESOLUTION)
+(define-enum gdFTEX_DISABLE_KERNING)
+(define-enum gdFTEX_XSHOW)
+(define-enum gdFTEX_FONTPATHNAME)
+(define-enum gdFTEX_FONTCONFIG)
+(define-enum gdFTEX_RETURNFONTPATHNAME)
+
+(define-cproc gd-ft-use-font-config (flag::<fixnum>)
+  (call <fixnum> "gdFTUseFontConfig"))
+
+(define-enum gdFTEX_Unicode)
+(define-enum gdFTEX_Shift_JIS)
+(define-enum gdFTEX_Big5)
+
+; BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist, ...
+
+(define-cproc gd-image-polygon (im::<gd-image> points::<list> pointsTotal::<fixnum> color::<int32>)
+  (call <void> "graphicsGdImagePolygon"))
+(define-cproc gd-image-open-polygon (im::<gd-image> points::<list> pointsTotal::<fixnum> color::<int32>)
+  (call <void> "graphicsGdImageOpenPolygon"))
+(define-cproc gd-image-filled-polygon (im::<gd-image> points::<list> pointsTotal::<fixnum> color::<int32>)
+  (call <void> "graphicsGdImageFilledPolygon"))
+
+(define-cproc gd-image-color-allocate (im::<gd-image> r::<fixnum> g::<fixnum> b::<fixnum>)
+  (call <fixnum> "gdImageColorAllocate"))
+(define-cproc gd-image-color-allocate-alpha (im::<gd-image> r::<fixnum> g::<fixnum> b::<fixnum> a::<fixnum>)
+  (call <int32> "gdImageColorAllocateAlpha"))
+(define-cproc gd-image-color-closest (im::<gd-image> r::<fixnum> g::<fixnum> b::<fixnum>)
+  (call <fixnum> "gdImageColorClosest"))
+(define-cproc gd-image-color-closest-alpha (im::<gd-image> r::<fixnum> g::<fixnum> b::<fixnum> a::<fixnum>)
+  (call <int32> "gdImageColorClosestAlpha"))
+(define-cproc gd-image-color-closest-hwb (im::<gd-image> r::<fixnum> g::<fixnum> b::<fixnum>)
+  (call <fixnum> "gdImageColorClosestHWB"))
+(define-cproc gd-image-color-exact (im::<gd-image> r::<fixnum> g::<fixnum> b::<fixnum>)
+  (call <fixnum> "gdImageColorExact"))
+(define-cproc gd-image-color-exact-alpha (im::<gd-image> r::<fixnum> g::<fixnum> b::<fixnum> a::<fixnum>)
+  (call <int32> "gdImageColorExactAlpha"))
+(define-cproc gd-image-color-resolve (im::<gd-image> r::<fixnum> g::<fixnum> b::<fixnum>)
+  (call <fixnum> "gdImageColorResolve"))
+(define-cproc gd-image-color-resolve-alpha (im::<gd-image> r::<fixnum> g::<fixnum> b::<fixnum> a::<fixnum>)
+  (call <int32> "gdImageColorResolveAlpha"))
+
+(define-cproc gd-true-color (r::<fixnum> g::<fixnum> b::<fixnum>)
+  (call <fixnum> "gdTrueColor"))
+(define-cproc gd-true-color-alpha (r::<fixnum> g::<fixnum> b::<fixnum> a::<fixnum>)
+  (call <int32> "gdTrueColorAlpha"))
+
+(define-cproc gd-image-color-deallocate (im::<gd-image> color::<int32>)
+  (call <void> "gdImageColorDeallocate"))
+
+(define-cproc gd-image-create-palette-from-true-color (im::<gd-image> ditherFlag::<fixnum> colorsWanted::<fixnum>)
+  (call <gd-image> "gdImageCreatePaletteFromTrueColor"))
+(define-cproc gd-image-true-color-to-palette (im::<gd-image> ditherFlag::<fixnum> colorsWanted::<fixnum>)
+  (call <void> "gdImageTrueColorToPalette"))
+
+(define-cproc gd-image-color-transparent (im::<gd-image> color::<int32>)
+  (call <void> "gdImageColorTransparent"))
+(define-cproc gd-image-palette-copy (dst::<gd-image> src::<gd-image>)
+  (call <void> "gdImagePaletteCopy"))
+
+(define-cproc gd-image-save-as-gif (im::<gd-image> path::<const-cstring>)
+  (call <fixnum> "graphicsGdImageSaveAsGif"))
+(define-cproc gd-image-save-as-png (im::<gd-image> path::<const-cstring>)
+  (call <fixnum> "graphicsGdImageSaveAsPng"))
+(define-cproc gd-image-save-as-wbmp (im::<gd-image> path::<const-cstring>)
+  (call <fixnum> "graphicsGdImageSaveAsWBMP"))
+(define-cproc gd-image-save-as-jpeg (im::<gd-image> path::<const-cstring>)
+  (call <fixnum> "graphicsGdImageSaveAsJpeg"))
+(define-cproc gd-image-save-as-gd (im::<gd-image> path::<const-cstring>)
+  (call <fixnum> "graphicsGdImageSaveAsGd"))
+(define-cproc gd-image-save-as-gd2 (im::<gd-image> path::<const-cstring>)
+  (call <fixnum> "graphicsGdImageSaveAsGd2"))
+
+(define-enum gdArc)
+(define-enum gdPie)
+(define-enum gdChord)
+(define-enum gdNoFill)
+(define-enum gdEdged)
+
+(define-cproc gd-image-filled-arc (im::<gd-image> cx::<fixnum> cy::<fixnum> w::<fixnum> h::<fixnum> s::<fixnum> e::<fixnum> color::<int32> style::<fixnum>)
+  (call <void> "gdImageFilledArc"))
+(define-cproc gd-image-arc (im::<gd-image> cx::<fixnum> cy::<fixnum> w::<fixnum> h::<fixnum> s::<fixnum> e::<fixnum> color::<int32>)
+  (call <void> "gdImageArc"))
+(define-cproc gd-image-filled-ellipse (im::<gd-image> cx::<fixnum> cy::<fixnum> w::<fixnum> h::<fixnum> color::<int32>)
+  (call <void> "gdImageFilledEllipse"))
+(define-cproc gd-image-fill-to-border (im::<gd-image> x::<fixnum> y::<fixnum> border::<int32> color::<int32>)
+  (call <void> "gdImageFillToBorder"))
+(define-cproc gd-image-fill (im::<gd-image> x::<fixnum> y::<fixnum> color::<int32>)
+  (call <void> "gdImageFill"))
+
+(define-cproc gd-image-copy (dst::<gd-image> src::<gd-image>
+							 dstX::<fixnum> dstY::<fixnum> srcX::<fixnum> srcY::<fixnum>
+						     w::<fixnum> h::<fixnum>)
+  (call <void> "gdImageCopy"))
+(define-cproc gd-image-copy-merge (dst::<gd-image> src::<gd-image>
+                                   dstX::<fixnum> dstY::<fixnum> srcX::<fixnum> srcY::<fixnum>
+                                   w::<fixnum> h::<fixnum> pct::<fixnum>)
+  (call <void> "gdImageCopyMerge"))
+(define-cproc gd-image-copy-merge-gray (dst::<gd-image> src::<gd-image>
+                                        dstX::<fixnum> dstY::<fixnum> srcX::<fixnum> srcY::<fixnum>
+                                        w::<fixnum> h::<fixnum> pct::<fixnum>)
+  (call <void> "gdImageCopyMergeGray"))
+(define-cproc gd-image-copy-resized (dst::<gd-image> src::<gd-image>
+                                     dstX::<fixnum> dstY::<fixnum> srcX::<fixnum> srcY::<fixnum>
+                                     dstW::<fixnum> dstH::<fixnum> srcW::<fixnum> srcH::<fixnum>)
+  (call <void> "gdImageCopyResized"))
+(define-cproc gd-image-copy-resampled (dst::<gd-image> src::<gd-image>
+                                       dstX::<fixnum> dstY::<fixnum>
+                                       srcX::<fixnum> srcY::<fixnum>
+                                       dstW::<fixnum> dstH::<fixnum>
+                                       srcW::<fixnum> srcH::<fixnum>)
+  (call <void> "gdImageCopyResampled"))
+(define-cproc gd-image-copy-rotated (dst::<gd-image> src::<gd-image>
+                                     dstX::<fixnum> dstY::<fixnum>
+                                     srcX::<fixnum> srcY::<fixnum>
+                                     srcWidth::<fixnum> srcHeight::<fixnum> angle::<fixnum>)
+  (call <void> "gdImageCopyRotated"))
+
+(define-cproc gd-image-set-brush (im::<gd-image> brush::<gd-image>)
+  (call <void> "gdImageSetBrush"))
+(define-cproc gd-image-set-tile (im::<gd-image> tile::<gd-image>)
+  (call <void> "gdImageSetTile"))
+(define-cproc gd-image-set-anti-aliased (im::<gd-image> c::<int32>)
+  (call <void> "gdImageSetAntiAliased"))
+(define-cproc gd-image-set-anti-aliased-dont-blend (im::<gd-image> c::<int32> dont_blend::<int32>)
+  (call <void> "gdImageSetAntiAliasedDontBlend"))
+(define-cproc gd-image-set-style (im::<gd-image> style::<list> styleLength::<fixnum>)
+  (call <void> "graphicsGdImageSetStyle"))
+(define-cproc gd-image-set-thickness (im::<gd-image> thickness::<fixnum>)
+  (call <void> "gdImageSetThickness"))
+(define-cproc gd-image-interlace (im::<gd-image> interlaceArg::<fixnum>)
+  (call <void> "gdImageInterlace"))
+(define-cproc gd-image-alpha-blending (im::<gd-image> blending::<fixnum>)
+  (call <void> "gdImageAlphaBlending"))
+(define-cproc gd-image-save-alpha (im::<gd-image> saveFlag::<fixnum>)
+  (call <void> "gdImageSaveAlpha"))
+
+(define-cproc gd-image-true-color (im::<gd-image>)
+  (call <fixnum> "gdImageTrueColor"))
+(define-cproc gd-image-sx (im::<gd-image>)
+  (call <fixnum> "gdImageSX"))
+(define-cproc gd-image-sy (im::<gd-image>)
+  (call <fixnum> "gdImageSY"))
+(define-cproc gd-image-colors-total (im::<gd-image>)
+  (call <fixnum> "gdImageColorsTotal"))
+(define-cproc gd-image-red (im::<gd-image> c::<fixnum>)
+  (call <fixnum> "gdImageRed"))
+(define-cproc gd-image-green (im::<gd-image> c::<fixnum>)
+  (call <fixnum> "gdImageGreen"))
+(define-cproc gd-image-blue (im::<gd-image> c::<fixnum>)
+  (call <fixnum> "gdImageBlue"))
+(define-cproc gd-image-alpha (im::<gd-image> c::<fixnum>)
+  (call <fixnum> "gdImageAlpha"))
+(define-cproc gd-image-get-transparent (im::<gd-image>)
+  (call <fixnum> "gdImageGetTransparent"))
+(define-cproc gd-image-get-interlaced (im::<gd-image>)
+  (call <fixnum> "gdImageGetInterlaced"))
+
+(define-cproc gd-image-palette-pixel (im::<gd-image> x::<fixnum> y::<fixnum>)
+  (call <fixnum> "gdImagePalettePixel"))
+(define-cproc gd-image-true-color-pixel (im::<gd-image> x::<fixnum> y::<fixnum>)
+  (call <int32> "gdImageTrueColorPixel"))
+
+(define-enum GD2_CHUNKSIZE)
+(define-enum GD2_CHUNKSIZE_MIN)
+(define-enum GD2_CHUNKSIZE_MAX)
+
+(define-enum GD2_VERS)
+(define-constant GD2_ID "gd2")
+
+(define-enum GD2_FMT_RAW)
+(define-enum GD2_FMT_COMPRESSED)
+
+(define-cproc gd-image-compare (im1::<gd-image> im2::<gd-image>)
+  (call <fixnum> "gdImageCompare"))
+
+(define-enum GD_CMP_IMAGE)
+(define-enum GD_CMP_NUM_COLORS)
+(define-enum GD_CMP_COLOR)
+(define-enum GD_CMP_SIZE_X)
+(define-enum GD_CMP_SIZE_Y)
+(define-enum GD_CMP_TRANSPARENT)
+(define-enum GD_CMP_BACKGROUND)
+(define-enum GD_CMP_INTERLACE)
+(define-enum GD_CMP_TRUECOLOR)
+(define-enum GD_RESOLUTION)
+
+;; cf. gdfx.h
+(define-cproc gd-image-square-to-circle (im::<gd-image> radius::<fixnum>)
+  (call <gd-image> "gdImageSquareToCircle"))
+; BGD_DECLARE(char *) gdImageStringFTCircle( ...
+(define-cproc gd-image-sharpen (im::<gd-image> pct::<fixnum>)
+  (call <void> "gdImageSharpen"))
+
+
+(define-cproc gd-get-features ()
+  (call <list> "graphicsGdGetFeatures"))
+
+;; Local variables:
+;; mode: scheme
+;; end:

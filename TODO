@@ -1,0 +1,5 @@
+in no paricular order:
+- gdFont related procedures
+- a gdIOCtx compatible port
+- some situations should be reported by an explicit error
+- a simple API

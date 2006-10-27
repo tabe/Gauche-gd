@@ -1,0 +1,23 @@
+SCMFILES = dashed.scm pm0.scm pm1.scm spiral0.scm spiral1.scm
+GENERATED = dashed.gif dashed.png \
+			pm0.gif pm0.png \
+			pm1.gif pm1.png \
+			spiral0.gif spiral0.png \
+            spiral1.gif spiral1.png
+
+example : $(SCMFILES)
+	for s in $(SCMFILES); do \
+		gosh -I.. $$s; \
+		res=$$?; \
+		if test "$$res" != "0"; then \
+			exit $$res; \
+		fi \
+	done
+
+clean :
+	@rm -f $(GENERATED)
+
+distclean : clean
+	@rm Makefile
+
+maintainer-clean : distclean
