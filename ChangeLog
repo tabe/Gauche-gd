@@ -1,3 +1,19 @@
+2006-10-29  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* graphics/gd.scm: gd-image-string, gd-image-string-up, gd-image-string-ft and string! added.
+
+	* test.scm: test gd-image-string, gd-image-string and gd-image-string-ft added.
+
+	* graphics_gdlib.stub: gd-image-string, gd-image-string-up and gd-image-string-ft added.
+
+	* graphics_gd.h: include gdfont*.h conditionally.
+
+	* graphics_gd.c: graphicsGdImageStringFT added.
+
+	* configure.ac: check headers: gdfont*.h
+
+	* Makefile.in: @GDFONT_CPPFLAGS@ added.
+
 2006-10-26  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* release 0.1.0.

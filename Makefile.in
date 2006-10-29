@@ -32,13 +32,13 @@ HEADERS   = graphics_gd.h graphics_gd.types
 TARGET    = $(ARCHFILES)
 GENERATED = 
 CONFIG_GENERATED = Makefile config.cache config.log config.status
-TEST_GENERATED = test.log test/screen-thumb.png test/screen-thumb.gif test/im0.png test/im10.gif test/im1.png test/im1.gif
+TEST_GENERATED = test.log test/screen-thumb.png test/screen-thumb.gif test/im0.png test/im10.gif test/im1.png test/im1.gif test/a.gif test/string.gif test/ft.gif
 
 HEADER_INSTALL_DIR  = $(DESTDIR)`$(GAUCHE_CONFIG) --siteincdir`
 SCM_INSTALL_DIR     = $(DESTDIR)`$(GAUCHE_CONFIG) --sitelibdir`
 ARCH_INSTALL_DIR    = $(DESTDIR)`$(GAUCHE_CONFIG) --sitearchdir`
 
-CPPFLAGS = @CPPFLAGS@ @GDLIB_CPPFLAGS@
+CPPFLAGS = @CPPFLAGS@ @GDLIB_CPPFLAGS@ @GDFONT_CPPFLAGS@
 CFLAGS   = @CFLAGS@ @GDLIB_CFLAGS@
 LDFLAGS  = @LDFLAGS@ @GDLIB_LDFLAGS@
 LIBS     = @LIBS@ @GDLIB_LIBS@ -lgd

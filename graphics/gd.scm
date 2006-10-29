@@ -49,7 +49,9 @@
 		  gd-image-set-clip gd-image-get-clip
 		  gd-image-bounds-safe
 		  gd-image-char gd-image-char-up
+		  gd-image-string gd-image-string-up
 		  gd-font-cache-setup gd-font-cache-shutdown gd-free-font-cache
+		  gd-image-string-ft
 		  gdFTEX_LINESPACE gdFTEX_CHARMAP gdFTEX_RESOLUTION gdFTEX_DISABLE_KERNING
 		  gdFTEX_XSHOW gdFTEX_FONTPATHNAME gdFTEX_FONTCONFIG gdFTEX_RETURNFONTPATHNAME
 		  gd-ft-use-font-config
@@ -82,6 +84,7 @@
 		  GD_CMP_TRANSPARENT GD_CMP_BACKGROUND GD_CMP_INTERLACE GD_CMP_TRUECOLOR
 		  GD_RESOLUTION
 		  gd-image-square-to-circle gd-image-sharpen ;; gdfx.h
+		  gd-font-get-giant gd-font-get-large gd-font-get-medium-bold gd-font-get-small gd-font-get-tiny ;; gdfont*.h
 
 		  ;;; Simple API
 		  <gd-error>
@@ -90,7 +93,7 @@
 		  save-as
 		  line! rectangle!
 		  set-clip! get-clip bounds-safe?
-		  char! polygon!
+		  char! string! polygon!
 		  color-allocate! color-closest color-exact! color-resolve! color-deallocate!
 		  true-color->palette true-color->palette!
 		  color-transparent! palette-copy!
@@ -138,12 +141,9 @@
 
 (define-method line! ((im <gd-image>) (x1 <integer>) (y1 <integer>) (x2 <integer>) (y2 <integer>) (color <integer>))
   (gd-image-line im x1 y1 x2 y2 color))
-(define-method rectangle! ((im <gd-image>) (x1 <integer>) (y1 <integer>) (x2 <integer>) (y2 <integer>) (color <integer>) (option <keyword>))
-  (if (eq? :filled option)
-	  (gd-image-filled-rectangle im x1 y1 x2 y2 color)
-	  (error "unknown option:" option)))
-(define-method rectangle! ((im <gd-image>) (x1 <integer>) (y1 <integer>) (x2 <integer>) (y2 <integer>) (color <integer>))
-  (gd-image-rectangle im x1 y1 x2 y2 color))
+(define-method rectangle! ((im <gd-image>) (x1 <integer>) (y1 <integer>) (x2 <integer>) (y2 <integer>) (color <integer>) . rest)
+  (let-keywords* rest ((filled #f))
+	((if filled gd-image-filled-rectangle gd-image-rectangle) im x1 y1 x2 y2 color)))
 
 (define-method set-clip! ((im <gd-image>) (x1 <integer>) (y1 <integer>) (x2 <integer>) (y2 <integer>))
   (gd-image-set-clip im x1 y1 x2 y2))
@@ -153,23 +153,27 @@
   (= 1 (gd-image-bounds-safe im x y)))
 
 (define-method char! ((im <gd-image>) (f <gd-font>) (x <integer>) (y <integer>) (c <integer>) (color <integer>) . rest)
-  (let-keywords* rest ((up #f))
-	((if up gd-image-char-up gd-image-char) im f x y c color)))
+  (let-keywords* rest ((direction 'right))
+	(case direction
+	  ((right) (gd-image-char im f x y color))
+	  ((up)    (gd-image-char-up im f x y color))
+	  (else    (error "unknown direction: " direction)))))
 
-(define-method polygon! ((im <gd-image>) (points <list>) (pointsTotal <integer>) (color <integer>) (option <keyword>))
-  (case option
-	((:filled) (gd-image-filled-polygon im points pointsTotal color))
-	((:open)   (gd-image-open-polygon   im points pointsTotal color))
-	(else (error "unknown keyword:" option))))
-(define-method polygon! ((im <gd-image>) (points <list>) (pointsTotal <integer>) (color <integer>))
-  (gd-image-polygon im points pointsTotal color))
-(define-method polygon! ((im <gd-image>) (points <list>) (color <integer>) (option <keyword>))
-  (case option
-	((:filled) (gd-image-filled-polygon im points (length points) color))
-	((:open)   (gd-image-open-polygon   im points (length points) color))
-	(else (error "unknown keyword:" option))))
-(define-method polygon! ((im <gd-image>) (points <list>) (color <integer>))
-  (gd-image-polygon im points (length points) color))
+(define-method string! ((im <gd-image>) (f <gd-font>) (x <integer>) (y <integer>) (str <string>) (color <integer>) . rest)
+  (let-keywords* rest ((direction 'right))
+	(case direction
+	  ((right) (gd-image-string im f x y str color))
+	  ((up)    (gd-image-string-up im f x y str color))
+	  (else    (error "unknown direction: " direction)))))
+
+(define-method polygon! ((im <gd-image>) (points <list>) (pointsTotal <integer>) (color <integer>) . rest)
+  (let-keywords* rest ((option #f))
+	(case option
+	  ((filled) (gd-image-filled-polygon im points pointsTotal color))
+	  ((open)   (gd-image-open-polygon   im points pointsTotal color))
+	  (else     (gd-image-polygon        im points pointsTotal color)))))
+(define-method polygon! ((im <gd-image>) (points <list>) (color <integer>) . rest)
+  (apply polygon! im points (length points) color rest))
 
 (define-method color-allocate! ((im <gd-image>) (r <integer>) (g <integer>) (b <integer>))
   (gd-image-color-allocate im r g b))
@@ -217,12 +221,11 @@
 	(if filled
 		(gd-image-filled-arc im cx cy w h s e color filled)
 		(gd-image-arc im cx cy w h s e color))))
-(define-method ellipse! ((im <gd-image>) (cx <integer>) (cy <integer>) (w <integer>) (h <integer>) (color <integer>) (option <keyword>))
-  (if (eq? :filled option)
-	  (gd-image-filled-ellipse im cx cy w h color)
-	  (error "unknown option:" option)))
-(define-method ellipse! ((im <gd-image>) (cx <integer>) (cy <integer>) (w <integer>) (h <integer>) (color <integer>))
-  (gd-image-arc im cx cy w h 0 360 color))
+(define-method ellipse! ((im <gd-image>) (cx <integer>) (cy <integer>) (w <integer>) (h <integer>) (color <integer>) . rest)
+  (let-keywords* rest ((filled #f))
+	(if filled
+		(gd-image-filled-ellipse im cx cy w h color)
+		(gd-image-arc im cx cy w h 0 360 color))))
 (define-method fill! ((im <gd-image>) (x <integer>) (y <integer>) (color <integer>) . rest)
   (let-keywords* rest ((border #f))
 	(if border

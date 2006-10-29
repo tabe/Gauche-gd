@@ -1,3 +1,4 @@
+;;; -*- coding: euc-jp -*-
 ;;;
 ;;; test graphics.gd
 ;;;
@@ -139,6 +140,62 @@
 				 "test/im1.png"
 				 "test/im1.gif"))
 
+(test-section "gdFont")
+(define *font-giant* (gd-font-get-giant))
+(test* "gd-font-get-giant" #t (or (is-a? *font-giant* <gd-font>) (not *font-giant*)))
+(define *font-large* (gd-font-get-large))
+(test* "gd-font-get-large" #t (or (is-a? *font-large* <gd-font>) (not *font-large*)))
+(define *font-medium-bold* (gd-font-get-medium-bold))
+(test* "gd-font-get-medium-bold" #t (or (is-a? *font-medium-bold* <gd-font>) (not *font-medium-bold*)))
+(define *font-small* (gd-font-get-small))
+(test* "gd-font-get-small" #t (or (is-a? *font-small* <gd-font>) (not *font-small*)))
+(define *font-tiny* (gd-font-get-tiny))
+(test* "gd-font-get-tiny" #t (or (is-a? *font-tiny* <gd-font>) (not *font-tiny*)))
+
+(test-section "gd-image-char / gd-image-char-up")
+(let* ((im (gd-image-create 40 100))
+	   (white (gd-image-color-allocate im #xff #xff #xff))
+	   (black (gd-image-color-allocate im 0 0 0)))
+  (define (A/a font y)
+	(when font
+	  (gd-image-char im font  0 y 65 black)
+	  (gd-image-char im font 20 y 97 black)))
+  (gd-image-filled-rectangle im 0 0 40 40 white)
+  (A/a *font-giant* 0)
+  (A/a *font-large* 20)
+  (A/a *font-medium-bold* 40)
+  (A/a *font-small* 60)
+  (A/a *font-tiny* 80)
+  (save-as im "test/a.gif"))
+
+(test-section "gd-image-string / gd-image-string-up")
+(let* ((im (gd-image-create 500 100))
+	   (white (gd-image-color-allocate im #xff #xff #xff))
+	   (black (gd-image-color-allocate im 0 0 0))
+	   (red   (gd-image-color-allocate im #xff 0 0)))
+  (gd-image-filled-rectangle im 0 0 500 100 white)
+  (when *font-medium-bold*
+	(gd-image-string im *font-medium-bold* 15 0 "Faith goes out through the window when beauty comes in at the door." black))
+  (when *font-small*
+	(gd-image-string-up im *font-small* 0 95 "George A. Moore" red))
+  (save-as im "test/string.gif"))
+
+(test-section "gd-image-string-ft")
+(let* ((im (gd-image-create 320 320))
+	   (white (gd-image-color-allocate im #xff #xff #xff))
+	   (black (gd-image-color-allocate im 0 0 0)))
+  (gd-image-filled-rectangle im 0 0 320 320 white)
+  (let ((fontpath "/usr/share/fonts/truetype/kochi/kochi-gothic.ttf"))
+	(when (file-exists? fontpath)
+	  (receive (lower-left lower-right upper-right upper-left)
+		  (gd-image-string-ft im black fontpath 40.0 0.0 100 100 (symbol->string (gauche-character-encoding)))
+		(test* "gd-image-string-ft(lower-left)"  (cons  99 107) lower-left)
+		(test* "gd-image-string-ft(lower-right)" (cons 262 107) lower-right)
+		(test* "gd-image-string-ft(upper-right)" (cons 262  60) upper-right)
+		(test* "gd-image-string-ft(upper-left)"  (cons  99  60) upper-left))))
+  (save-as im "test/ft.gif"))
+
+(test-section "GD Features")
 (format #t "*gd-features*: ~s\n" *gd-features*)
 
 (test-end)

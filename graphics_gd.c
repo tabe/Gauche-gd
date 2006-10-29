@@ -268,6 +268,82 @@ graphicsGdImageSetStyle(gdImage *im, ScmObj style, int styleLength)
   free(p);
 }
 
+#define PROPER_GRAPHICS_GD_FONT_GET(size) int \
+  graphicsGdFontGet ## size(gdFont **dst)		   \
+  {												   \
+	*dst = gdFontGet ## size();					   \
+	return 0;									   \
+  }
+
+#define IMPROPER_GRAPHICS_GD_FONT_GET(size) int					\
+  graphicsGdFontGet ## size(gdFont **dst)						\
+  {																\
+	graphicsGdRaiseCondition("could not get gdFont%s", #size);	\
+	*dst = (gdFont *)NULL;										\
+	return -1;													\
+  }
+
+#ifdef HAVE_GDFONTG_H
+PROPER_GRAPHICS_GD_FONT_GET(Giant)
+#else
+IMPROPER_GRAPHICS_GD_FONT_GET(Giant)
+#endif /* HAVE_GDFONTG_H */
+
+#ifdef HAVE_GDFONTL_H
+PROPER_GRAPHICS_GD_FONT_GET(Large)
+#else
+IMPROPER_GRAPHICS_GD_FONT_GET(Large)
+#endif /* HAVE_GDFONTL_H */
+
+#ifdef HAVE_GDFONTMB_H
+PROPER_GRAPHICS_GD_FONT_GET(MediumBold)
+#else
+IMPROPER_GRAPHICS_GD_FONT_GET(MediumBold)
+#endif /* HAVE_GDFONTMB_H */
+
+#ifdef HAVE_GDFONTS_H
+PROPER_GRAPHICS_GD_FONT_GET(Small)
+#else
+IMPROPER_GRAPHICS_GD_FONT_GET(Small)
+#endif /* HAVE_GDFONTS_H */
+
+#ifdef HAVE_GDFONTT_H
+PROPER_GRAPHICS_GD_FONT_GET(Tiny)
+#else
+IMPROPER_GRAPHICS_GD_FONT_GET(Tiny)
+#endif /* HAVE_GDFONTT_H */
+
+#undef PROPER_GRAPHICS_GD_FONT_GET
+#undef IMPROPER_GRAPHICS_GD_FONT_GET
+
+int
+graphicsGdImageStringFT(gdImage *im,
+						ScmPair **brect0, ScmPair **brect1, ScmPair **brect2, ScmPair **brect3,
+						int fg, char *fontlist, double ptsize, double angle, int x, int y, ScmString *str)
+{
+  int brect[8];
+  char *s = Scm_GetString(str);
+  char *e = gdImageStringFT(im, brect, fg, fontlist, ptsize, angle, x, y, s);
+  if (e == NULL) {
+	*brect0 = SCM_NEW(ScmPair);
+	SCM_SET_CAR(*brect0, Scm_MakeInteger(brect[0]));
+	SCM_SET_CDR(*brect0, Scm_MakeInteger(brect[1]));
+	*brect1 = SCM_NEW(ScmPair);
+	SCM_SET_CAR(*brect1, Scm_MakeInteger(brect[2]));
+	SCM_SET_CDR(*brect1, Scm_MakeInteger(brect[3]));
+	*brect2 = SCM_NEW(ScmPair);
+	SCM_SET_CAR(*brect2, Scm_MakeInteger(brect[4]));
+	SCM_SET_CDR(*brect2, Scm_MakeInteger(brect[5]));
+	*brect3 = SCM_NEW(ScmPair);
+	SCM_SET_CAR(*brect3, Scm_MakeInteger(brect[6]));
+	SCM_SET_CDR(*brect3, Scm_MakeInteger(brect[7]));
+	return 0;
+  } else {
+	graphicsGdRaiseCondition("gdImageStringFT failed: %s", e);
+	return -1;
+  }
+}
+
 ScmObj
 graphicsGdGetFeatures(void)
 {

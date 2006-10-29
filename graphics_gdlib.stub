@@ -121,10 +121,10 @@
   (call <void> "gdImageChar"))
 (define-cproc gd-image-char-up (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> c::<int32> color::<int32>)
   (call <void> "gdImageCharUp"))
-; (define-cproc gd-image-string (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> s::<const-cstring> color::<int32>)
-;   (call <void> "gdImageString"))
-; (define-cproc gd-image-string-up (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> s::<const-cstring> color::<int32>)
-;   (call <void> "gdImageStringUp"))
+(define-cproc gd-image-string (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> s::<const-cstring> color::<int32>)
+  (call <void> "gdImageString"))
+(define-cproc gd-image-string-up (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> s::<const-cstring> color::<int32>)
+  (call <void> "gdImageStringUp"))
 ; (define-cproc gd-image-string-16 (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> s::<const-cstring> color::<int32>)
 ;   (call <void> "gdImageString16"))
 ; (define-cproc gd-image-string-16-up (im::<gd-image> f::<gd-font> x::<fixnum> y::<fixnum> s::<const-cstring> color::<int32>)
@@ -145,6 +145,9 @@
 
 ; /* FreeType 2 text output */
 ; BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist, ...
+(define-cproc gd-image-string-ft (im::<gd-image> fg::<int32> fontlist::<const-cstring> ptsize::<real> angle::<real> x::<fixnum> y::<fixnum> str::<string>)
+  (body (<pair> <pair> <pair> <pair>)
+		"graphicsGdImageStringFT(im, &SCM_RESULT0, &SCM_RESULT1, &SCM_RESULT2, &SCM_RESULT3, fg, fontlist, ptsize, angle, x, y, str);"))
 
 (define-enum gdFTEX_LINESPACE)
 (define-enum gdFTEX_CHARMAP)
@@ -342,6 +345,17 @@
 (define-cproc gd-image-sharpen (im::<gd-image> pct::<fixnum>)
   (call <void> "gdImageSharpen"))
 
+;; cf. gdfont*.h
+(define-cproc gd-font-get-giant ()
+  (body <gd-font> "graphicsGdFontGetGiant(&SCM_RESULT);"))
+(define-cproc gd-font-get-large ()
+  (body <gd-font> "graphicsGdFontGetLarge(&SCM_RESULT);"))
+(define-cproc gd-font-get-medium-bold ()
+  (body <gd-font> "graphicsGdFontGetMediumBold(&SCM_RESULT);"))
+(define-cproc gd-font-get-small ()
+  (body <gd-font> "graphicsGdFontGetSmall(&SCM_RESULT);"))
+(define-cproc gd-font-get-tiny ()
+  (body <gd-font> "graphicsGdFontGetTiny(&SCM_RESULT);"))
 
 (define-cproc gd-get-features ()
   (call <list> "graphicsGdGetFeatures"))

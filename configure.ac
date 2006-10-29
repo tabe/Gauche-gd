@@ -31,7 +31,12 @@ AC_SUBST(EXEEXT)
 dnl Check for headers.
 dnl Add your macro calls to check required headers, if you have any.
 AC_CHECK_HEADER(gd.h, [], [AC_MSG_RESULT([could not found])])
-AC_CHECK_HEADER(gdfx.h, [], [AC_MSG_RESULT([could not found])])
+AC_CHECK_HEADER(gdfontg.h, [GDFONT_CPPFLAGS="${GDFONT_CPPFLAGS} -DHAVE_GDFONTG_H"], [AC_MSG_RESULT([could not found])])
+AC_CHECK_HEADER(gdfontl.h, [GDFONT_CPPFLAGS="${GDFONT_CPPFLAGS} -DHAVE_GDFONTL_H"], [AC_MSG_RESULT([could not found])])
+AC_CHECK_HEADER(gdfontmb.h, [GDFONT_CPPFLAGS="${GDFONT_CPPFLAGS} -DHAVE_GDFONTMB_H"], [AC_MSG_RESULT([could not found])])
+AC_CHECK_HEADER(gdfonts.h, [GDFONT_CPPFLAGS="${GDFONT_CPPFLAGS} -DHAVE_GDFONTS_H"], [AC_MSG_RESULT([could not found])])
+AC_CHECK_HEADER(gdfontt.h, [GDFONT_CPPFLAGS="${GDFONT_CPPFLAGS} -DHAVE_GDFONTT_H"], [AC_MSG_RESULT([could not found])])
+AC_SUBST(GDFONT_CPPFLAGS)
 
 dnl Check for other programs.
 dnl Add your macro calls to check existence of programs, if you have any.

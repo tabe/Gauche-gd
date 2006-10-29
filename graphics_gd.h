@@ -42,6 +42,21 @@
 #include <fcntl.h>
 
 #include <gd.h>
+#ifdef HAVE_GDFONTG_H
+#include <gdfontg.h>
+#endif /* HAVE_GDFONTG_H */
+#ifdef HAVE_GDFONTL_H
+#include <gdfontl.h>
+#endif /* HAVE_GDFONTL_H */
+#ifdef HAVE_GDFONTMB_H
+#include <gdfontmb.h>
+#endif /* HAVE_GDFONTMB_H */
+#ifdef HAVE_GDFONTS_H
+#include <gdfonts.h>
+#endif /* HAVE_GDFONTS_H */
+#ifdef HAVE_GDFONTT_H
+#include <gdfontt.h>
+#endif /* HAVE_GDFONTT_H */
 
 #include <gauche.h>
 #include <gauche/extend.h>
