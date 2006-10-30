@@ -181,19 +181,42 @@
   (save-as im "test/string.gif"))
 
 (test-section "gd-image-string-ft")
-(let* ((im (gd-image-create 320 320))
-	   (white (gd-image-color-allocate im #xff #xff #xff))
-	   (black (gd-image-color-allocate im 0 0 0)))
-  (gd-image-filled-rectangle im 0 0 320 320 white)
-  (let ((fontpath "/usr/share/fonts/truetype/kochi/kochi-gothic.ttf"))
-	(when (file-exists? fontpath)
-	  (receive (lower-left lower-right upper-right upper-left)
-		  (gd-image-string-ft im black fontpath 40.0 0.0 100 100 (symbol->string (gauche-character-encoding)))
-		(test* "gd-image-string-ft(lower-left)"  (cons  99 107) lower-left)
-		(test* "gd-image-string-ft(lower-right)" (cons 262 107) lower-right)
-		(test* "gd-image-string-ft(upper-right)" (cons 262  60) upper-right)
-		(test* "gd-image-string-ft(upper-left)"  (cons  99  60) upper-left))))
-  (save-as im "test/ft.gif"))
+(use srfi-1)          ;; for first, second, ...
+(use gauche.sequence) ;; for for-each-with-index
+(for-each-with-index
+ (lambda (i ft)
+   (let* ((im (gd-image-create 320 320))
+		  (white (gd-image-color-allocate im #xff #xff #xff))
+		  (black (gd-image-color-allocate im 0 0 0)))
+	 (gd-image-filled-rectangle im 0 0 320 320 white)
+	 (let ((path (car ft))
+		   (pairs (cddr ft)))
+	   (when (file-exists? path)
+		 (receive (lower-left lower-right upper-right upper-left)
+			 (gd-image-string-ft im black path 40.0 0.0 30 100 "Gauche-gd")
+		   (test* "gd-image-string-ft(lower-left)"  (first  pairs) lower-left)
+		   (test* "gd-image-string-ft(lower-right)" (second pairs) lower-right)
+		   (test* "gd-image-string-ft(upper-right)" (third  pairs) upper-right)
+		   (test* "gd-image-string-ft(upper-left)"  (fourth pairs) upper-left)
+		   )
+		 (with-ft-font/fg/pt/angle
+		  path black 48 0
+		  (lambda ()
+			(string! im 30 200 (cadr ft))
+			))
+		 (save-as im (format #f "test/ft~d.gif" i))))))
+ '(("/usr/share/fonts/truetype/kochi/kochi-gothic.ttf"
+	"東風"
+	( 29 . 108)
+	(273 . 108)
+	(273 .  59)
+	( 29 .  59))
+   ("/usr/share/fonts/truetype/sazanami/sazanami-gothic.ttf"
+	"さざなみ"
+	( 29 . 108)
+	(273 . 108)
+	(273 .  58)
+	( 29 .  58))))
 
 (test-section "GD Features")
 (format #t "*gd-features*: ~s\n" *gd-features*)

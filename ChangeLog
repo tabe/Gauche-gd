@@ -1,3 +1,11 @@
+2006-10-31  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* doc/reference.scm: char!, string!, current-ft-font, current-ft-fg, current-ft-pt, current-ft-angle, and with-ft-font/fg/pt/angle added.
+
+	* graphics/gd.scm: current-ft-font, current-ft-fg, current-ft-pt, current-ft-angle, and with-ft-font/fg/pt/angle added.
+
+	* test.scm: test string! added.
+
 2006-10-29  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* graphics/gd.scm: gd-image-string, gd-image-string-up, gd-image-string-ft and string! added.

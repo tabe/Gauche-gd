@@ -4,8 +4,8 @@
 (use text.html-lite)
 (use text.tree)
 
-(define *version* "0.1.0")
-(define *last-update* "Wed Oct 25 2006")
+(define *version* "0.1.1")
+(define *last-update* "Mon Oct 30 2006")
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
@@ -27,8 +27,8 @@
 	  (def lang rest ...)))
 	((_ lang ((method (name arg ...) ...) (p ...)) rest ...)
 	 (list*
-	  (html:h3 (html:span :class "type" "procedure") ": "
-			   (html:span :class "procedure" (html-escape-string (symbol->string 'name))) " "
+	  (html:h3 (html:span :class "type" "method") ": "
+			   (html:span :class "method" (html-escape-string (symbol->string 'name))) " "
 			   (cons (html:span :class "argument" (html-escape-string (x->string 'arg))) " ") ...)
 	  ...
 	  (html:p (html-escape-string p))
@@ -50,7 +50,7 @@
 
 	   ((class <gd-image>)
 		("A fundamental class. Its instance has a foreign pointer to GD's \"gdImage\". It is expected as the first argument of most of procedures whose names starting with prefix `gd-image-'.")
-		("基本となる画像のクラスです。実際には GD の \"gdImage\" への foreign pointer です。\"gd-image-\" (C では \"gdImage\")で始まるほとんどの手続きで第1引数として用いられます。"))
+		("基本となるイメージのクラスです。実際には GD の \"gdImage\" への foreign pointer です。\"gd-image-\" (C では \"gdImage\")で始まるほとんどの手続きで第1引数として用いられます。"))
 
 	   ((class <gd-font>)
 		("Another fundamental class. Its instance has a foreign pointer to GD's \"gdFont\"."
@@ -80,7 +80,7 @@
 				   (gd-true-color-get-red c)
 				   (gd-true-color-get-green c)
 				   (gd-true-color-get-blue c))
-		("Each of these is equivalent to gdTrueColorGetAlpha, gdTrueColorGetRed, gdTrueColorGetGreen or gdTrueColorGetBlue respectively.")
+		("Each of these is equivalent to gdTrueColorGetAlpha, gdTrueColorGetRed, gdTrueColorGetGreen, or gdTrueColorGetBlue respectively.")
 		("それぞれ gdTrueColorGetAlpha, gdTrueColorGetRed, gdTrueColorGetGreen, gdTrueColorGetBlue に対応します。"))
 
 	   ((procedure (gd-alpha-blend dest src))
@@ -90,7 +90,7 @@
 	   ((procedure (gd-image-create sx sy)
 				   (gd-image-create-palette sx sy)
 				   (gd-image-create-true-color sx sy))
-		("Each of these is a constructor of <gd-image> which is equivalent to gdImageCreate, gdImageCreatePalette or gdImageCreateTrueColor respectively.")
+		("Each of these is a constructor of <gd-image> which is equivalent to gdImageCreate, gdImageCreatePalette, or gdImageCreateTrueColor respectively.")
 		("それぞれ gdImageCreate, gdImageCreatePalette, gdImageCreateTrueColor に対応し、<gd-image> オブジェクトを返します。"))
 
 	   ((procedure (gd-image-create-from-png path)
@@ -100,7 +100,7 @@
 				   (gd-image-create-from-gd path)
 				   (gd-image-create-from-gd2 path))
 		("Like C's gdImageCreateFrom* family, one of these creates a <gd-image> object from a source file in its particular image format. Unlike its C's equivalents, it treats the string-value single argument as a path of source. The file handle has been closed before successful return. In case of failure #f is returned.")
-		("C の gdImageCreateFrom* 関数と同様に、これらの手続きはそれぞれ特定の画像フォーマットに応じてファイルから <gd-image> オブジェクトを作成します。ただ C の同等の関数と異なり、引数にソースファイルのパスを文字列で指定します。手続きに成功して戻った場合にはソースファイルのハンドルは閉じられています。失敗した場合には #f を返します。"))
+		("C の gdImageCreateFrom* 関数と同様に、これらの手続きはそれぞれ特定のイメージフォーマットに応じてファイルから <gd-image> オブジェクトを作成します。ただ C の同等の関数と異なり、引数にソースファイルのパスを文字列で指定します。手続きに成功して戻った場合にはソースファイルのハンドルは閉じられています。失敗した場合には #f を返します。"))
 
 	   ((procedure (gd-image-create-from-xpm path))
 		("The gdImageCreateFromXpm equivalent, which returns a <gd-image> object in case of success, otherwise #f.")
@@ -115,7 +115,7 @@
        ((procedure (gd-image-set-pixel im x y color)
 				   (gd-image-get-pixel im x y)
 				   (gd-image-get-true-color-pixel im x y))
-        ("Each of these is equivalent to gdImageSetPixel, gdImageGetPixel or gdImageGetTrueColorPixel respectively.")
+        ("Each of these is equivalent to gdImageSetPixel, gdImageGetPixel, or gdImageGetTrueColorPixel respectively.")
         ("それぞれ gdImageSetPixel, gdImageGetPixel, gdImageGetTrueColorPixel に対応します。"))
 
        ((procedure (gd-image-line im x1 y1 x2 y2 color))
@@ -136,6 +136,22 @@
 		("Given the coordinates of a point, return either 1 (if it is in the current clip) or 0 (otherwise). You should use it in order to check whether the coordinates is suitable or not for arguments of another procedure, e.g. gd-image-fill.")
 		("クリップ領域内の座標があたえられた場合は1を、さもなくば0を返します。gd-image-fill などの手続きの引数に適した座標かどうかを確認するためにこの関数を利用するべきです。"))
 
+	   ((procedure (gd-image-char im f x y c color)
+				   (gd-image-char-up im f x y c color))
+		("Put a single byte character on the given image with the font provided by a gd-font-get-*. If you would like to print a string containing multibyte characters, try procedure \"gd-image-string-ft\" or method \"string!\".")
+		("イメージへ1バイト文字を出力します。第2引数のフォントは手続き gd-font-get-* から取得してください。マルチバイト文字を含む文字列を出力する場合には手続き \"gd-image-string-ft\" またはメソッド \"string!\" を使ってください。"))
+
+	   ((procedure (gd-image-string im f x y s color)
+				   (gd-image-string-up im f x y s color))
+		("Put a string consising of single byte characters, with the font provided by a gd-font-get-*. If you would like to print a string containing multibyte characters, try gd-image-string-ft.")
+		("イメージへ1バイト文字からなる文字列を出力します。第2引数のフォントは手続き gd-font-get-* から取得してください。マルチバイト文字を含む文字列を出力する場合には手続き \"gd-image-string-ft\" またはメソッド \"string!\" を使ってください。"))
+
+	   ((procedure (gd-image-string-ft im fg fontlist ptsize angle x y str))
+		("Print a string with a FreeType font specified by the path `fontlist'. Unlike the original version, it return *four* pairs of integers which represent the coordinates of the points surrounding the bounding rectangle, and coming lower-left, lower-right, upper-right, and upper-left in that order. "
+		 "If your gosh is configured with option \"--enable-multibyte=utf-8\", then congratulations! and multibyte characters will be available in `str' (with an appropriate font, of course). Otherwise you had better use method \"string!\".")
+		("`fontlist' でパスを指定することで FreeType フォントを用いて文字列を書き出します。オリジナルの C の関数と異なり、この手続きは*4つ*のペアを返し、それぞれが出力先の矩形を囲む座標(順に左下、右下、右上、左上)を表します。"
+		 "gosh が \"--enable-multibyte=utf-8\" というオプション付きでビルドされていれば `str' でマルチバイト文字が利用できます。そうでない場合はメソッド \"string!\" の使用を考えてください。"))
+
 	   ((procedure (gd-image-polygon im points pointsTotal color)
 				   (gd-image-filled-polygon im points pointsTotal color)
 				   (gd-image-open-polygon im points pointsTotal color))
@@ -154,7 +170,7 @@
 				   (gd-image-color-exact-alpha im r g b a)
 				   (gd-image-color-resolve im r g b)
 				   (gd-image-color-resolve-alpha im r g b a))
-		("Each of these corresponds to gdImageColorAllocate, gdImageColorAllocateAlpha, gdImageColorClosest, gdImageColorClosestAlpha, gdImageColorClosestHWB, gdImageColorExact, gdImageColorExactAlpha, gdImageColorResolve or gdImageColorResolveAlpha respectively.")
+		("Each of these corresponds to gdImageColorAllocate, gdImageColorAllocateAlpha, gdImageColorClosest, gdImageColorClosestAlpha, gdImageColorClosestHWB, gdImageColorExact, gdImageColorExactAlpha, gdImageColorResolve, or gdImageColorResolveAlpha respectively.")
 		("それぞれ C の関数 gdImageColorAllocate, gdImageColorAllocateAlpha, gdImageColorClosest, gdImageColorClosestAlpha, gdImageColorClosestHWB, gdImageColorExact, gdImageColorExactAlpha, gdImageColorResolve, gdImageColorResolveAlpha に対応します。"))
 
 	   ((procedure (gd-true-color r g b)
@@ -210,7 +226,7 @@
 				   (gd-image-interlace im interlaceArg)
 				   (gd-image-alpha-blending im blending)
 				   (gd-image-save-alpha im saveFlag))
-		("The following functions are called respectively: gdImageSetBrush, gdImageSetTile, gdImageSetAntiAliased, gdImageSetAntiAliasedDontBlend, gdImageSetThickness, gdImageInterlace, gdImageAlphaBlending and gdImageSaveAlpha.")
+		("The following functions are called respectively: gdImageSetBrush, gdImageSetTile, gdImageSetAntiAliased, gdImageSetAntiAliasedDontBlend, gdImageSetThickness, gdImageInterlace, gdImageAlphaBlending, and gdImageSaveAlpha.")
 		("それぞれ gdImageSetBrush, gdImageSetTile, gdImageSetAntiAliased, gdImageSetAntiAliasedDontBlend, gdImageSetThickness, gdImageInterlace, gdImageAlphaBlending, gdImageSaveAlpha に対応します。"))
 
 		((procedure (gd-image-set-style im style styleLength))
@@ -234,7 +250,7 @@
 				   (gd-image-green im c)
 				   (gd-image-blue im c)
 				   (gd-image-alpha im c))
-		("Each of these corresponds to gdImageRed, gdImageGreen, gdImageBlue or gdImageAlpha respectively.")
+		("Each of these corresponds to gdImageRed, gdImageGreen, gdImageBlue, or gdImageAlpha respectively.")
 		("それぞれ gdImageRed, gdImageGreen, gdImageBlue, gdImageAlpha に対応します。"))
 
 	   ((procedure (gd-image-get-transparent im)
@@ -255,6 +271,14 @@
 				   (gd-image-sharpen im pct))
 		("Like gdImageSquareToCircle or gdImageSharpen respectively.")
 		("それぞれ gdImageSquareToCircle, gdImageSharpen に対応します。"))
+
+	   ((procedure (gd-font-get-giant)
+				   (gd-font-get-large)
+				   (gd-font-get-medium-bold)
+				   (gd-font-get-small)
+				   (gd-font-get-tiny))
+		("One of these procedures give you the font of size Giant, Large, MediumBold, Small, or Tiny respectively, which is for gd-image-char, gd-image-string etc.")
+		("これらの手続きはそれぞれサイズが Giant, Large, MediumBold, Small, Tiny のフォントを返します。このフォントは gd-image-char や gd-image-string 等の引数に利用されます。"))
 	   ))
 
 (define-macro (simple-api lang)
@@ -264,11 +288,37 @@
 		  "Possible symbols: fontconfig freetype gif jpeg png xpm.")
 		 ("有効な GD の機能を表すシンボルのリスト。"
 		  "含まれる可能性のあるシンボルは以下の通り: fontconfig freetype gif jpeg png xpm。"))
+
 		((method (save-as (im <gd-image>) (path <string>) &optional (fmt <symbol>)))
-		 ("It provides the (currently only) way to output a image. It tries to create a file of path `path' even if exists and return 0 in case of success. Unless the optional `fmt' is given it choices the output image format by the extension (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"gd\" and \"gd2\") of the path."
-		  "Available formats (if supported): gif, jpeg, png, gd and gd2.")
+		 ("It provides the (currently only) way to output a image. It tries to create a file of path `path' even if exists and return 0 in case of success. Unless the optional `fmt' is given it choices the output image format by the extension (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"gd\", and \"gd2\") of the path."
+		  "Available formats (if supported): gif, jpeg, png, gd, and gd2.")
 		 ("イメージを出力する(現時点では唯一の)メソッドです。`path' として与えられたファイルを(既存であっても)新しく作成します。成功した場合は0を返します。オプショナルな引数 `fmt' で明示的にイメージフォーマットを指定しなければ `path' の拡張子によって選択されます。判別される拡張子は \"gif\", \"jpg\", \"jpeg\", \"jpe\", \"png\", \"gd\", \"gd2\" です。"
 		  "(サポートしていれば)利用できるフォーマットは gif, jpeg, png, gd, gd2 です。"))
+
+		((method (char! (im <gd-image>) (f <gd-font>) (x <integer>) (y <integer>) (c <integer>) (color <integer>) &keyword direction))
+		 ("Put a character on the given `im'. If symbol 'up follows keyword `direction', \"gd-image-char-up\" is called instead of \"gd-image-char\".")
+		 ("イメージへ文字を書き出します。キーワード `direction' に続いてシンボル 'up が指定された場合、\"gd-image-char\" の代わりに \"gd-image-char-up\" が呼ばれます。"))
+
+		((method (string! (im <gd-image>) (f <gd-font>) (x <integer>) (y <integer>) (str <string>) (color <integer>) &keyword direction)
+				 (string! (im <gd-image>) (fg <integer>) (font <string>) (pt <real>) (angle <real>) (x <integer>) (y <integer>) (str <string>))
+				 (string! (im <gd-image>) (x <integer>) (y <integer>) (str <string>) &keyword font fg pt angle))
+		 ("The first variant calls either \"gd-image-string\" or \"gd-image-string-up\" according to the symbol following keyword `direction'."
+		  "The usage of the second one is consistent with \"gd-image-string-ft\"."
+		  "The third, an abbreviation of the second, treats default values of parameters if not specified with keywords. Also see \"current-ft-*\" and \"with-ft-font/fg/pt/angle\".")
+		 ("最初の形はキーワード `direction' とともに与えられるシンボルに従って \"gd-image-string\" または \"gd-image-string-up\" を呼び出します。"
+		  "2番目の形は \"gd-image-string-ft\" の呼び出しと対応します。"
+		  "最後の形は2番目の略記で、キーワードとともにパラメータが指定されなければデフォルトの値を用います。\"current-ft-*\" や \"with-ft-font/fg/pt/angle\" も参照してください。"))
+
+		((parameter current-ft-font
+					current-ft-fg
+					current-ft-pt
+					current-ft-angle)
+		 ("Sometimes it is useful to print a string subsequently on an image with fixed parameters. These parameters are reserved for such a case and its values are referred in a call of \"string!\" without optional arguments or keywords.")
+		 ("いくつかのパラメータを固定して続けて文字列をイメージ上へ出力することがあります。こういった場合のためにこれらのパラメータが用意されており、オプショナルな引数やキーワードで指定されずに \"string!\" が呼ばれた時に参照されます。"))
+
+		((procedure (with-ft-font/fg/pt/angle font fg pt angle thunk))
+		 ("Call `thunk' with parameterized current-ft-font, current-ft-fg, current-ft-pt, and current-ft-angle. Its return value is `thunk''s one.")
+		 ("current-ft-font, current-ft-fg, current-ft-pt, current-ft-angle を与えられた値にして `thunk' を呼びます。戻ると `thunk' からの戻り値を返し、current-ft-* の値は復元されます。"))
 		))
 
 (define (document-tree lang)

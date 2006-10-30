@@ -33,6 +33,8 @@
 ;;;  $Id$
 
 (define-module graphics.gd
+  (use gauche.charconv)
+  (use gauche.parameter)
   (export <gd-image>
 		  <gd-font>
 		  ;;; C Layer API
@@ -93,6 +95,7 @@
 		  save-as
 		  line! rectangle!
 		  set-clip! get-clip bounds-safe?
+		  current-ft-font current-ft-fg current-ft-pt current-ft-angle with-ft-font/fg/pt/angle
 		  char! string! polygon!
 		  color-allocate! color-closest color-exact! color-resolve! color-deallocate!
 		  true-color->palette true-color->palette!
@@ -152,12 +155,23 @@
 (define-method bounds-safe? ((im <gd-image>) (x <integer>) (y <integer>))
   (= 1 (gd-image-bounds-safe im x y)))
 
-(define-method char! ((im <gd-image>) (f <gd-font>) (x <integer>) (y <integer>) (c <integer>) (color <integer>) . rest)
+(define-method char! ((im <gd-image>) (f <gd-font>) (x <integer>) (y <integer>) (c <char>) (color <integer>) . rest)
   (let-keywords* rest ((direction 'right))
 	(case direction
-	  ((right) (gd-image-char im f x y color))
-	  ((up)    (gd-image-char-up im f x y color))
+	  ((right) (gd-image-char im f x y (char->integer c) color))
+	  ((up)    (gd-image-char-up im f x y (char->integer c) color))
 	  (else    (error "unknown direction: " direction)))))
+
+(define current-ft-font  (make-parameter #f))
+(define current-ft-fg    (make-parameter #f))
+(define current-ft-pt    (make-parameter 12))
+(define current-ft-angle (make-parameter 0))
+(define (with-ft-font/fg/pt/angle font fg pt angle thunk)
+  (parameterize ((current-ft-font  font)
+				 (current-ft-fg    fg)
+				 (current-ft-pt    pt)
+				 (current-ft-angle angle))
+	(thunk)))
 
 (define-method string! ((im <gd-image>) (f <gd-font>) (x <integer>) (y <integer>) (str <string>) (color <integer>) . rest)
   (let-keywords* rest ((direction 'right))
@@ -165,6 +179,14 @@
 	  ((right) (gd-image-string im f x y str color))
 	  ((up)    (gd-image-string-up im f x y str color))
 	  (else    (error "unknown direction: " direction)))))
+(define-method string! ((im <gd-image>) (fg <integer>) (fontlist <string>) (ptsize <real>) (angle <real>) (x <integer>) (y <integer>) (str <string>))
+  (gd-image-string-ft im fg fontlist ptsize angle x y (ces-convert str (gauche-character-encoding) 'UTF8)))
+(define-method string! ((im <gd-image>) (x <integer>) (y <integer>) (str <string>) . rest)
+  (let-keywords* rest ((font  (current-ft-font))
+					   (fg    (current-ft-fg))
+					   (pt    (current-ft-pt))
+					   (angle (current-ft-angle)))
+	(gd-image-string-ft im fg font ptangle x y (ces-convert str (gauche-character-encoding) 'UTF8))))
 
 (define-method polygon! ((im <gd-image>) (points <list>) (pointsTotal <integer>) (color <integer>) . rest)
   (let-keywords* rest ((option #f))
