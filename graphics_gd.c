@@ -79,32 +79,32 @@ graphicsGdRaiseCondition(const char *msg, const char *arg)
 					 msg, arg);
 }
 
-#define PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM(fmt) int					\
-  graphicsGdImageCreateFrom ## fmt(gdImage **dst, const char *path)		\
-  {																		\
-	FILE *f;															\
-	struct flock fl;													\
-	int fd;																\
-	gdImage *im;														\
-	if ( (f = fopen(path, "rb")) == NULL) {								\
-	  graphicsGdRaiseCondition("could not open file: %s", path);		\
-	  return -1;														\
-	}																	\
-	fl.l_type = F_RDLCK;												\
-	fl.l_whence = SEEK_SET;												\
-	fl.l_start = fl.l_len = 0;											\
-	fd = fileno(f);														\
-	if (fcntl(fd, F_SETLKW, &fl) != 0) {								\
-	  graphicsGdRaiseCondition("could not lock file: %s", path);		\
-	  return -2;														\
-	}																	\
-	*dst = gdImageCreateFrom ## fmt(f);									\
-	if (fclose(f) == 0) {												\
-	  return 0;															\
-	} else {															\
-	  graphicsGdRaiseCondition("could not close file: %s", path);		\
-	  return -3;														\
-	}																	\
+#define PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM(fmt) int				\
+  graphicsGdImageCreateFrom ## fmt(gdImage **dst, const char *path)	\
+  {																	\
+	FILE *f;														\
+	struct flock fl;												\
+	int fd;															\
+	gdImage *im;													\
+	if ( (f = fopen(path, "rb")) == NULL) {							\
+	  graphicsGdRaiseCondition("could not open file: %s", path);	\
+	  return -1;													\
+	}																\
+	fl.l_type = F_RDLCK;											\
+	fl.l_whence = SEEK_SET;											\
+	fl.l_start = fl.l_len = 0;										\
+	fd = fileno(f);													\
+	if (fcntl(fd, F_SETLKW, &fl) != 0) {							\
+	  graphicsGdRaiseCondition("could not lock file: %s", path);	\
+	  return -2;													\
+	}																\
+	*dst = gdImageCreateFrom ## fmt(f);								\
+	if (fclose(f) == 0) {											\
+	  return 0;														\
+	} else {														\
+	  graphicsGdRaiseCondition("could not close file: %s", path);	\
+	  return -3;													\
+	}																\
   }
 
 #define IMPROPER_GRAPHICS_GD_IMAGE_CREATE_FROM(fmt) int				\
@@ -159,31 +159,31 @@ graphicsGdImageCreateFromXpm(gdImage **dst, const char *path)
 #undef PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM
 #undef IMPROPER_GRAPHICS_GD_IMAGE_CREATE_FROM
 
-#define PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(fmt, args) int					\
-  graphicsGdImageSaveAs ## fmt(gdImage *im, const char *path)			\
-  {																		\
-	FILE *f;															\
-	struct flock fl;													\
-	int fd;																\
-	if ( (f = fopen(path, "wb")) == NULL) {								\
-	  graphicsGdRaiseCondition("could not open file: %s", path);		\
-	  return -1;														\
-	}																	\
-	fl.l_type = F_WRLCK;												\
-	fl.l_whence = SEEK_SET;												\
-	fl.l_start = fl.l_len = 0;											\
-	fd = fileno(f);														\
-	if (fcntl(fd, F_SETLKW, &fl) != 0) {								\
-	  graphicsGdRaiseCondition("could not lock file: %s", path);		\
-	  return -2;														\
-	}																	\
-	gdImage ## fmt args;												\
-	if (fclose(f) == 0) {												\
-	  return 0;															\
-	} else {															\
-	  graphicsGdRaiseCondition("could not close file: %s", path);		\
-	  return -3;														\
-	}																	\
+#define PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(fmt, args) int				\
+  graphicsGdImageSaveAs ## fmt(gdImage *im, const char *path)		\
+  {																	\
+	FILE *f;														\
+	struct flock fl;												\
+	int fd;															\
+	if ( (f = fopen(path, "wb")) == NULL) {							\
+	  graphicsGdRaiseCondition("could not open file: %s", path);	\
+	  return -1;													\
+	}																\
+	fl.l_type = F_WRLCK;											\
+	fl.l_whence = SEEK_SET;											\
+	fl.l_start = fl.l_len = 0;										\
+	fd = fileno(f);													\
+	if (fcntl(fd, F_SETLKW, &fl) != 0) {							\
+	  graphicsGdRaiseCondition("could not lock file: %s", path);	\
+	  return -2;													\
+	}																\
+	gdImage ## fmt args;											\
+	if (fclose(f) == 0) {											\
+	  return 0;														\
+	} else {														\
+	  graphicsGdRaiseCondition("could not close file: %s", path);	\
+	  return -3;													\
+	}																\
   }
 
 #define IMPROPER_GRAPHICS_GD_IMAGE_SAVE_AS(fmt) int				\
@@ -219,11 +219,11 @@ PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(Gd2, (im, f, 0, GD2_FMT_COMPRESSED))
 #undef PROPER_GRAPHICS_GD_IMAGE_SAVE_AS
 #undef IMPROPER_GRAPHICS_GD_IMAGE_SAVE_AS
 
-#define DEFINE_GRAPHICS_GD_IMAGE_POLYGON(name) void \
+#define DEFINE_GRAPHICS_GD_IMAGE_POLYGON(name) void						\
   graphicsGdImage ## name(gdImage *im, ScmObj points, int pointsTotal, int color) \
   {																		\
 	ScmObj head, pair;													\
-gdPoint *p, *q;														\
+	gdPoint *p, *q;														\
 	int i = 0;															\
 	SCM_ASSERT(SCM_LISTP(points) && SCM_PROPER_LIST_P(points) && pointsTotal >= 0);	\
 	p = q = calloc(pointsTotal, sizeof(gdPoint));						\
@@ -244,7 +244,16 @@ gdPoint *p, *q;														\
   }
 
 DEFINE_GRAPHICS_GD_IMAGE_POLYGON(Polygon)
+#ifdef WITH_GD_IMAGE_OPEN_POLYGON
 DEFINE_GRAPHICS_GD_IMAGE_POLYGON(OpenPolygon)
+#else
+void
+graphicsGdImageOpenPolygon(gdImage *im, ScmObj points, int pointsTotal, int color)
+{
+  graphicsGdRaiseCondition("gdImageOpenPolygon is unavailable (possibly because of version %s)", GDLIB_VERSION);
+  return;
+}
+#endif /* WITH_GD_IMAGE_OPEN_POLYGON */
 DEFINE_GRAPHICS_GD_IMAGE_POLYGON(FilledPolygon)
 
 #undef DEFINE_GRAPHICS_GD_IMAGE_POLYGON
@@ -268,11 +277,11 @@ graphicsGdImageSetStyle(gdImage *im, ScmObj style, int styleLength)
   free(p);
 }
 
-#define PROPER_GRAPHICS_GD_FONT_GET(size) int \
-  graphicsGdFontGet ## size(gdFont **dst)		   \
-  {												   \
-	*dst = gdFontGet ## size();					   \
-	return 0;									   \
+#define PROPER_GRAPHICS_GD_FONT_GET(size) int	\
+  graphicsGdFontGet ## size(gdFont **dst)		\
+  {												\
+	*dst = gdFontGet ## size();					\
+	return 0;									\
   }
 
 #define IMPROPER_GRAPHICS_GD_FONT_GET(size) int					\
@@ -367,6 +376,12 @@ graphicsGdGetFeatures(void)
   r = Scm_Cons(SCM_INTERN("fontconfig"), r);
 #endif /* GD_FONTCONFIG */
   return r;
+}
+
+const char *
+graphicsGdGetVersion(void)
+{
+  return GDLIB_VERSION;
 }
 
 ScmObj

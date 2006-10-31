@@ -108,6 +108,7 @@
 		  true-color? palette?
 		  object-equal?
 		  *gd-features*
+		  *gd-version*
 		  ))
 (select-module graphics.gd)
 
@@ -115,6 +116,19 @@
 
 (define-condition-type <gd-error> <error> #f
   (error-code))
+
+(define-constant gdFTEX_LINESPACE            1)
+(define-constant gdFTEX_CHARMAP              2)
+(define-constant gdFTEX_RESOLUTION           4)
+(define-constant gdFTEX_DISABLE_KERNING      8)
+(define-constant gdFTEX_XSHOW               16)
+(define-constant gdFTEX_FONTPATHNAME        32)
+(define-constant gdFTEX_FONTCONFIG          64)
+(define-constant gdFTEX_RETURNFONTPATHNAME 128)
+
+(define-constant gdFTEX_Unicode   0)
+(define-constant gdFTEX_Shift_JIS 1)
+(define-constant gdFTEX_Big5      2)
 
 (define-method save-as ((im <gd-image>) (path <string>))
   (let ((s (string-split path #\.)))
@@ -186,7 +200,7 @@
 					   (fg    (current-ft-fg))
 					   (pt    (current-ft-pt))
 					   (angle (current-ft-angle)))
-	(gd-image-string-ft im fg font ptangle x y (ces-convert str (gauche-character-encoding) 'UTF8))))
+	(gd-image-string-ft im fg font pt angle x y (ces-convert str (gauche-character-encoding) 'UTF8))))
 
 (define-method polygon! ((im <gd-image>) (points <list>) (pointsTotal <integer>) (color <integer>) . rest)
   (let-keywords* rest ((option #f))
@@ -321,5 +335,6 @@
   (= 0 (gd-image-compare im1 im2)))
 
 (define-constant *gd-features* (gd-get-features))
+(define-constant *gd-version*  (gd-get-version))
 
 (provide "graphics/gd")

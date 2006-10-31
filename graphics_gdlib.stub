@@ -149,21 +149,12 @@
   (body (<pair> <pair> <pair> <pair>)
 		"graphicsGdImageStringFT(im, &SCM_RESULT0, &SCM_RESULT1, &SCM_RESULT2, &SCM_RESULT3, fg, fontlist, ptsize, angle, x, y, str);"))
 
-(define-enum gdFTEX_LINESPACE)
-(define-enum gdFTEX_CHARMAP)
-(define-enum gdFTEX_RESOLUTION)
-(define-enum gdFTEX_DISABLE_KERNING)
-(define-enum gdFTEX_XSHOW)
-(define-enum gdFTEX_FONTPATHNAME)
-(define-enum gdFTEX_FONTCONFIG)
-(define-enum gdFTEX_RETURNFONTPATHNAME)
-
-(define-cproc gd-ft-use-font-config (flag::<fixnum>)
-  (call <fixnum> "gdFTUseFontConfig"))
-
-(define-enum gdFTEX_Unicode)
-(define-enum gdFTEX_Shift_JIS)
-(define-enum gdFTEX_Big5)
+(if "defined(WITH_GD_FT_USE_FONT_CONFIG)"
+	(define-cproc gd-ft-use-font-config (flag::<fixnum>)
+	  (call <fixnum> "gdFTUseFontConfig")))
+(if "!defined(WITH_GD_FT_USE_FONT_CONFIG)"
+	(define-cproc gd-ft-use-font-config (flag::<fixnum>)
+	  (expr <fixnum> "0")))
 
 ; BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist, ...
 
@@ -359,6 +350,8 @@
 
 (define-cproc gd-get-features ()
   (call <list> "graphicsGdGetFeatures"))
+(define-cproc gd-get-version ()
+  (call <const-cstring> "graphicsGdGetVersion"))
 
 ;; Local variables:
 ;; mode: scheme

@@ -69,7 +69,7 @@ uninstall :
 	$(INSTALL) -U $(HEADER_INSTALL_DIR) $(HEADERS)
 	$(INSTALL) -U $(SCM_INSTALL_DIR) $(SCMFILES) 
 	$(INSTALL) -U $(ARCH_INSTALL_DIR) $(ARCHFILES)
-	$(INSTALL) -m 444 -T $(SCM_INSTALL_DIR)/.packages $(PACKAGE).gpd
+	$(INSTALL) -m 444 -U $(SCM_INSTALL_DIR)/.packages $(PACKAGE).gpd
 
 clean :
 	cd doc && $(MAKE) clean

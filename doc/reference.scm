@@ -283,6 +283,10 @@
 
 (define-macro (simple-api lang)
   `(def ,lang
+		((constant *gd-version*)
+		 ("The version of GD library. Detected at the compile time of the package.")
+		 ("GD のバージョン。Gauche-gd のコンパイル時に取得したものです。"))
+
 		((constant *gd-features*)
 		 ("A list of symbols which mean available features of GD."
 		  "Possible symbols: fontconfig freetype gif jpeg png xpm.")

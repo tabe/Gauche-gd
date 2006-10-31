@@ -4,6 +4,7 @@
 ;;;
 
 (use gauche.test)
+(use gauche.version)
 
 (test-start "graphics.gd")
 (use graphics.gd)
@@ -71,7 +72,9 @@
 (test* "gd-true-color-get-red"   #x9a (gd-true-color-get-red   color))
 (test* "gd-true-color-get-green" #xbc (gd-true-color-get-green color))
 (test* "gd-true-color-get-blue"  #xde (gd-true-color-get-blue  color))
-(test* "gd-alpha-blend" 33440629 (gd-alpha-blend #x11ee3355 #x09ff4477))
+(test* "gd-alpha-blend"
+	   (if (version<=? "2.0.29" *gd-version*) 33440629 33309300)
+	   (gd-alpha-blend #x11ee3355 #x09ff4477))
 
 (test-section "gdImage")
 (define im (gd-image-create 240 240))
@@ -220,6 +223,8 @@
 
 (test-section "GD Features")
 (format #t "*gd-features*: ~s\n" *gd-features*)
+(test-section "GD Version")
+(format #t "*gd-version*: ~s\n" *gd-version*)
 
 (test-end)
 
