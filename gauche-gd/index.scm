@@ -10,6 +10,7 @@
  (GD/Scheme "http://www196.pair.com/lisovsky/scheme/gd/index.html")
  )
 
+(define *last-update* "Thu Nov 03 2006")
 (define *gauche-gd-version* (file->string "../VERSION"))
 (define *gauche-gd-tarball-basename* (string-append "Gauche-gd-" *gauche-gd-version* ".tgz"))
 (define *gauche-gd-tarball-size* (file-size (string-append "../../" *gauche-gd-tarball-basename*)))
@@ -22,7 +23,7 @@
 	((fixedpoint:frame "Gauche-gd")
 	 (html:p :id "lang_navi" (html:a :href (en/ja "index.html" "index.en.html")
 										"[" (en/ja "Japanese" "English") "]"))
-	 (html:p :id "last_update" "Last update: Sat Oct 28 2006")
+	 (html:p :id "last_update" "Last update: " *last-update*)
 	 (html:p (html:dfn /Gauche-gd/)
 			 (en/ja
 				 (list " is an extension package of " /Gauche/ " which provides a binding of Boutell's " /GD/ "2 library.")
@@ -30,6 +31,7 @@
 
 	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "News" "最新情報"))
 	 (html:ul
+	  (html:li "[2006-11-03] " (en/ja "Release 0.1.1." "バージョン 0.1.1 を公開しました。"))
 	  (html:li "[2006-10-28] " (en/ja "Some links added." "リンクを追加しました。"))
 	  (html:li "[2006-10-26] " (en/ja "Release 0.1.0." "バージョン 0.1.0 を公開しました。")))
 
@@ -44,8 +46,8 @@
 	 (html:p (en/ja "This package is for Gauche 0.8.7 or later."
 					"このパッケージは Gauche 0.8.7 またはそれ以上で動作します。"))
 	 (html:ul
-	  (html:li (en/ja (list "It requires the " /GD/ "2 library (version 2.01 or higher) which has been installed.")
-					  (list "また別途 " /GD/ "2 ライブラリ(バージョン 2.01 以上)がインストールされている必要があります。"))))
+	  (html:li (en/ja (list "It requires the " /GD/ "2 library (version 2.0.28 or higher) which has been installed.")
+					  (list "また別途 " /GD/ "2 ライブラリ(バージョン 2.0.28 以上)がインストールされている必要があります。"))))
 
 	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "Download" "ダウンロード"))
 	 (html:p (html:a :href *gauche-gd-tarball-url*
