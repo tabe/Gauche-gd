@@ -6,7 +6,7 @@
 (define (main args)
   (let* ((im (gd-image-create-true-color 640 480))
  		 (white (color-resolve! im #xff #xff #xff)))
-	(rectangle! im 0 0 640 480 white :filled)
+	(rectangle! im 0 0 640 480 white :filled #t)
 	(let ((style (append-map
 				  (lambda (x)
 					(let ((c (color-resolve! im (car x) (cadr x) (caddr x))))
