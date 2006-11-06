@@ -43,7 +43,7 @@ CFLAGS   = @CFLAGS@ @GDLIB_CFLAGS@
 LDFLAGS  = @LDFLAGS@ @GDLIB_LDFLAGS@
 LIBS     = @LIBS@ @GDLIB_LIBS@ -lgd
 
-graphics_gd_SRCS = graphics_gd.c graphics_gdlib.stub
+graphics_gd_SRCS = graphics_gd_io.c graphics_gd.c graphics_gdlib.stub
 
 all : $(TARGET)
 

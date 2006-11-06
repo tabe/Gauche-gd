@@ -34,6 +34,7 @@
  */
 
 #include "graphics_gd.h"
+#include "graphics_gd_io.h"
 
 ScmClass *GraphicsGdImageClass;
 ScmClass *GraphicsGdFontClass;
@@ -158,6 +159,94 @@ graphicsGdImageCreateFromXpm(gdImage **dst, const char *path)
 
 #undef PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM
 #undef IMPROPER_GRAPHICS_GD_IMAGE_CREATE_FROM
+
+#define PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(fmt) int					\
+  graphicsGdImageCreate ## fmt ## Port(gdImage **dst, ScmPort *port)	\
+  {																		\
+	gdIOCtx *ctx;														\
+	SCM_ASSERT(SCM_IPORTP(port));										\
+	if ( (ctx = graphicsGdGetIOCtxFromPort(port)) == NULL) {			\
+	  graphicsGdRaiseCondition("could not get gdIOCtx: graphicsGdImageCreate%sPort", #fmt);	\
+	  *dst = (gdImage *)NULL;											\
+	  return -1;														\
+	}																	\
+	*dst = gdImageCreateFrom ## fmt ## Ctx(ctx);						\
+	return 0;															\
+  }
+#define IMPROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(fmt) int					\
+  graphicsGdImageCreate ## fmt ## Port(gdImage **dst, ScmPort *port)	\
+  {																		\
+	graphicsGdRaiseCondition("unsupported format: %s", #fmt);			\
+	*dst = (gdImage *)NULL;												\
+	return -1;															\
+  }
+
+#ifdef GD_PNG
+PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Png)
+#else
+IMPROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Png)
+#endif /* GD_PNG */
+
+#ifdef GD_GIF
+PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Gif)
+#else
+IMPROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Gif)
+#endif /* GD_GIF */
+
+#ifdef GD_JPEG
+PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Jpeg)
+#else
+IMPROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Jpeg)
+#endif /* GD_JPEG */
+
+PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(WBMP)
+PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Gd)
+PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Gd2)
+
+#undef PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT
+#undef IMPROPER_GRAPHICS_GD_IMAGE_CREATE_PORT
+
+#define PROPER_GRAPHICS_GD_IMAGE_WRITE_AS(fmt, args) void				\
+  graphicsGdImageWriteAs ## fmt(gdImage *im, ScmPort *port)				\
+  {																		\
+	gdIOCtx *ctx;														\
+	SCM_ASSERT(SCM_OPORTP(port));										\
+	if ( (ctx = graphicsGdGetIOCtxFromPort(port)) == NULL) {			\
+	  graphicsGdRaiseCondition("could not get gdIOCtx: graphicsGdImageWriteAs%s", #fmt); \
+	  return;															\
+	}																	\
+	gdImage ## fmt ## Ctx args;											\
+	(ctx->gd_free)(ctx);												\
+  }
+
+#define IMPROPER_GRAPHICS_GD_IMAGE_WRITE_AS(fmt) void			\
+  graphicsGdImageWriteAs ## fmt(gdImage *im, ScmPort *port)		\
+  {																\
+	graphicsGdRaiseCondition("unsupported format: %s", #fmt);	\
+  }
+
+#ifdef GD_JPEG
+PROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Jpeg, (im, ctx, -1))
+#else
+IMPROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Jpeg)
+#endif /* GD_JPEG */
+
+PROPER_GRAPHICS_GD_IMAGE_WRITE_AS(WBMP, (im, -1, ctx))
+
+#ifdef GD_PNG
+PROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Png, (im, ctx))
+#else
+IMPROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Png)
+#endif /* GD_PNG */
+
+#ifdef GD_GIF
+PROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Gif, (im, ctx))
+#else
+IMPROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Gif)
+#endif /* GD_GIF */
+
+#undef PROPER_GRAPHICS_GD_IMAGE_WRITE_AS
+#undef IMPROPER_GRAPHICS_GD_IMAGE_WRITE_AS
 
 #define PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(fmt, args) int				\
   graphicsGdImageSaveAs ## fmt(gdImage *im, const char *path)		\

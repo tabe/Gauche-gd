@@ -139,9 +139,10 @@
 				 "test/im0.png"
 				 "test/im0.gif"))
 (define im1 (gd-image-square-to-circle im0 300))
-(save-as im1 (if (memq 'png *gd-features*)
-				 "test/im1.png"
-				 "test/im1.gif"))
+(current-gd-image-format (if (memq 'png *gd-features*) 'png 'gif))
+(call-with-output-file (format #f "test/im1.~a" (current-gd-image-format))
+  (lambda (oport)
+	(write im1 oport))) ; it also test `write-as'
 
 (test-section "gdFont")
 (define *font-giant* (gd-font-get-giant))

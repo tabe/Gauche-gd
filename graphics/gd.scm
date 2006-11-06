@@ -92,6 +92,10 @@
 		  <gd-error>
 		  destroy!
 		  set-pixel! get-pixel
+		  current-gd-image-format
+		  read-gd-image
+		  write-object
+		  write-as
 		  save-as
 		  line! rectangle!
 		  set-clip! get-clip bounds-safe?
@@ -129,6 +133,29 @@
 (define-constant gdFTEX_Unicode   0)
 (define-constant gdFTEX_Shift_JIS 1)
 (define-constant gdFTEX_Big5      2)
+
+(define current-gd-image-format (make-parameter 'gif))
+
+(define-method read-gd-image ((port <port>))
+  (read-gd-image port (current-gd-image-format)))
+(define-method read-gd-image ((port <port>) (fmt <symbol>))
+  (case fmt
+	((gif) (gd-image-create-gif-port port))
+	((jpg jpeg jpe) (gd-image-create-jpeg-port port))
+	((png)  (gd-image-create-png-port  port))
+	((wbmp) (gd-image-create-wbmp-port port))
+	(else (error "unknown format:" fmt))))
+
+(define-method write-object ((im <gd-image>) port)
+  (write-as im (current-gd-image-format) port))
+
+(define-method write-as ((im <gd-image>) (fmt <symbol>) port)
+  (case fmt
+	((gif) (gd-image-write-as-gif im port))
+	((jpg jpeg jpe) (gd-image-write-as-jpeg im port))
+	((png)  (gd-image-write-as-png im port))
+	((wbmp) (gd-image-write-as-wbmp im port))
+	(else (error "unknown format:" fmt))))
 
 (define-method save-as ((im <gd-image>) (path <string>))
   (let ((s (string-split path #\.)))

@@ -86,6 +86,19 @@
 (define-cproc gd-image-create-from-xpm (path::<const-cstring>)
   (body <gd-image> "graphicsGdImageCreateFromXpm(&SCM_RESULT, path);"))
 
+(define-cproc gd-image-create-png-port (iport::<input-port>)
+  (body <gd-image> "graphicsGdImageCreatePngPort(&SCM_RESULT, iport);"))
+(define-cproc gd-image-create-gif-port (iport::<input-port>)
+  (body <gd-image> "graphicsGdImageCreateGifPort(&SCM_RESULT, iport);"))
+(define-cproc gd-image-create-jpeg-port (iport::<input-port>)
+  (body <gd-image> "graphicsGdImageCreateJpegPort(&SCM_RESULT, iport);"))
+(define-cproc gd-image-create-wbmp-port (iport::<input-port>)
+  (body <gd-image> "graphicsGdImageCreateWBMPPort(&SCM_RESULT, iport);"))
+(define-cproc gd-image-create-gd-port (iport::<input-port>)
+  (body <gd-image> "graphicsGdImageCreateGdPort(&SCM_RESULT, iport);"))
+(define-cproc gd-image-create-gd2-port (iport::<input-port>)
+  (body <gd-image> "graphicsGdImageCreateGd2Port(&SCM_RESULT, iport);"))
+
 (define-cproc gd-image-destroy (im::<gd-image>)
   (body <void>
 		"if (!graphicsGdImageDestroyedP(im_scm)) {"
@@ -201,6 +214,15 @@
   (call <void> "gdImageColorTransparent"))
 (define-cproc gd-image-palette-copy (dst::<gd-image> src::<gd-image>)
   (call <void> "gdImagePaletteCopy"))
+
+(define-cproc gd-image-write-as-gif (im::<gd-image> oport::<output-port>)
+  (call <void> "graphicsGdImageWriteAsGif"))
+(define-cproc gd-image-write-as-png (im::<gd-image> oport::<output-port>)
+  (call <void> "graphicsGdImageWriteAsPng"))
+(define-cproc gd-image-write-as-wbmp (im::<gd-image> oport::<output-port>)
+  (call <void> "graphicsGdImageWriteAsWBMP"))
+(define-cproc gd-image-write-as-jpeg (im::<gd-image> oport::<output-port>)
+  (call <void> "graphicsGdImageWriteAsJpeg"))
 
 (define-cproc gd-image-save-as-gif (im::<gd-image> path::<const-cstring>)
   (call <fixnum> "graphicsGdImageSaveAsGif"))

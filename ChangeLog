@@ -1,3 +1,17 @@
+2006-11-06  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* test.scm: modified a test for `write'
+
+	* graphics_gdlib.stub: gd-image-create-png-port, gd-image-create-gif-port, gd-image-create-jpeg-port, gd-image-create-wbmp-port, gd-image-create-gd-port, gd-image-create-gd2-port, gd-image-write-as-gif, gd-image-write-as-png, gd-image-write-as-wbmp, and gd-image-write-as-jpeg added.
+
+	* graphics_gd_io.h, graphics_gd_io.c: added.
+
+	* graphics/gd.scm: current-gd-image-format, read-gd-image, write-object, and write-as added.
+
+	* graphics_gd.c: include graphics_gd_io.h. PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT and IMPROPER_GRAPHICS_GD_IMAGE_CREATE_PORT added.
+
+	* Makefile.in (graphics_gd_SRCS): graphics_gd_io.c added.
+
 2006-11-02  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* example/dashed.scm: modified according to the keyword spec of rectangle!.
