@@ -4,8 +4,8 @@
 (use text.html-lite)
 (use text.tree)
 
-(define *version* "0.1.1")
-(define *last-update* "Mon Oct 30 2006")
+(define *version* "0.1.2")
+(define *last-update* "Tue Nov 07 2006")
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
@@ -53,10 +53,8 @@
 		("基本となるイメージのクラスです。実際には GD の \"gdImage\" への foreign pointer です。\"gd-image-\" (C では \"gdImage\")で始まるほとんどの手続きで第1引数として用いられます。"))
 
 	   ((class <gd-font>)
-		("Another fundamental class. Its instance has a foreign pointer to GD's \"gdFont\"."
-		 "(Under developing)")
-		("基本となるフォントのクラスです。実際には GD の \"gdFont\" への foreign pointer です。"
-		 "(開発中)"))
+		("Another fundamental class. Its instance has a foreign pointer to GD's \"gdFont\". You can get its instance by any of \"gd-font-get-*\".")
+		("基本となるフォントのクラスです。実際には GD の \"gdFont\" への foreign pointer です。手続き \"gd-font-get-*\" のいずれかでインスタンスを得ることができます。"))
 
 	   ((variable gdMaxColors gdAlphaMax gdAlphaOpaque gdAlphaTransparent gdRedMax gdGreenMax gdBlueMax
 				  gdFTEX_LINESPACE gdFTEX_CHARMAP gdFTEX_RESOLUTION gdFTEX_DISABLE_KERNING
@@ -293,11 +291,28 @@
 		 ("有効な GD の機能を表すシンボルのリスト。"
 		  "含まれる可能性のあるシンボルは以下の通り: fontconfig freetype gif jpeg png xpm。"))
 
+		((parameter current-gd-image-format)
+		 ("It is expected to keep a symbol which decides the image format taken with \"read-gd-image\" and/or \"write\" unless specified.")
+		 ("GD のイメージは本来特定のフォーマットに依存しない形に抽象化されていますが、入出力を行う際に特定のフォーマットが前提になっていることがよくあります。\"read-gd-image\" や \"write\" は このパラメータの値を参照するので、そういった場合に利用できます。"))
+
+		((method (read-gd-image (port <port>) &optional (fmt <symbol>)))
+		 ("Read a image with or without format `fmt' (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", and \"gd2\"). See also \"current-gd-image-format\".")
+		 ("ポート `port' からイメージを入力します。フォーマット `fmt' として取り得る値は \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", 及び \"gd2\" です。\"current-gd-image-format\" も参照してください。"))
+
+		((method (write-as (im <gd-image>) (fmt <symbol>) port))
+		 ("Put a image `im' with format `fmt' (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", and \"wbmp\").")
+		 ("ポートへイメージ `im' を出力します。フォーマット `fmt' に取り得る値は \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", 及び \"wbmp\" です。"))
+
+		((method (display (im <gd-image>) &optional port)
+				 (write (im <gd-image>) &optional port))
+		 ("They are the same abbreviations of \"write-as\". See also \"current-gd-image-format\".")
+		 ("\"write-as\" の省略形で、いずれも同じように振舞います。\"current-gd-image-format\" も参照してください。"))
+
 		((method (save-as (im <gd-image>) (path <string>) &optional (fmt <symbol>)))
-		 ("It provides the (currently only) way to output a image. It tries to create a file of path `path' even if exists and return 0 in case of success. Unless the optional `fmt' is given it choices the output image format by the extension (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"gd\", and \"gd2\") of the path."
-		  "Available formats (if supported): gif, jpeg, png, gd, and gd2.")
-		 ("イメージを出力する(現時点では唯一の)メソッドです。`path' として与えられたファイルを(既存であっても)新しく作成します。成功した場合は0を返します。オプショナルな引数 `fmt' で明示的にイメージフォーマットを指定しなければ `path' の拡張子によって選択されます。判別される拡張子は \"gif\", \"jpg\", \"jpeg\", \"jpe\", \"png\", \"gd\", \"gd2\" です。"
-		  "(サポートしていれば)利用できるフォーマットは gif, jpeg, png, gd, gd2 です。"))
+		 ("It provides another way to output a image. It tries to create a file of path `path' even if exists and return 0 in case of success. Unless the optional `fmt' is given it choices the output image format by the extension (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", and \"gd2\") of the path."
+		  "Available formats (if supported): gif, jpeg, png, wbmp, gd, and gd2.")
+		 ("イメージを出力するメソッドの1つです。`path' として与えられたファイルを(既存であっても)新しく作成します。成功した場合は0を返します。オプショナルな引数 `fmt' で明示的にイメージフォーマットを指定しなければ `path' の拡張子によって選択されます。判別される拡張子は \"gif\", \"jpg\", \"jpeg\", \"jpe\", \"png\", \"wbmp\", \"gd\", \"gd2\" です。"
+		  "(サポートしていれば)利用できるフォーマットは gif, jpeg, png, wbmp, gd, gd2 です。"))
 
 		((method (char! (im <gd-image>) (f <gd-font>) (x <integer>) (y <integer>) (c <integer>) (color <integer>) &keyword direction))
 		 ("Put a character on the given `im'. If symbol 'up follows keyword `direction', \"gd-image-char-up\" is called instead of \"gd-image-char\".")
@@ -308,7 +323,7 @@
 				 (string! (im <gd-image>) (x <integer>) (y <integer>) (str <string>) &keyword font fg pt angle))
 		 ("The first variant calls either \"gd-image-string\" or \"gd-image-string-up\" according to the symbol following keyword `direction'."
 		  "The usage of the second one is consistent with \"gd-image-string-ft\"."
-		  "The third, an abbreviation of the second, treats default values of parameters if not specified with keywords. Also see \"current-ft-*\" and \"with-ft-font/fg/pt/angle\".")
+		  "The third, an abbreviation of the second, treats default values of parameters if not specified with keywords. See also \"current-ft-*\" and \"with-ft-font/fg/pt/angle\".")
 		 ("最初の形はキーワード `direction' とともに与えられるシンボルに従って \"gd-image-string\" または \"gd-image-string-up\" を呼び出します。"
 		  "2番目の形は \"gd-image-string-ft\" の呼び出しと対応します。"
 		  "最後の形は2番目の略記で、キーワードとともにパラメータが指定されなければデフォルトの値を用います。\"current-ft-*\" や \"with-ft-font/fg/pt/angle\" も参照してください。"))
@@ -317,8 +332,8 @@
 					current-ft-fg
 					current-ft-pt
 					current-ft-angle)
-		 ("Sometimes it is useful to print a string subsequently on an image with fixed parameters. These parameters are reserved for such a case and its values are referred in a call of \"string!\" without optional arguments or keywords.")
-		 ("いくつかのパラメータを固定して続けて文字列をイメージ上へ出力することがあります。こういった場合のためにこれらのパラメータが用意されており、オプショナルな引数やキーワードで指定されずに \"string!\" が呼ばれた時に参照されます。"))
+		 ("Sometimes it is useful to fix parameters in question to print strings subsequently on an image. These are reserved for such a case and its values are referred in a call of \"string!\" without optional arguments or keywords.")
+		 ("イメージ上へ連続して文字列を出力する際、関係するパラメータを固定すると便利な場合があります。こういった場合のためにこれらのパラメータが用意されており、オプショナルな引数やキーワードで指定されずに \"string!\" が呼ばれた時に参照されます。"))
 
 		((procedure (with-ft-font/fg/pt/angle font fg pt angle thunk))
 		 ("Call `thunk' with parameterized current-ft-font, current-ft-fg, current-ft-pt, and current-ft-angle. Its return value is `thunk''s one.")
@@ -354,8 +369,8 @@
 		  (c-layer-api ja))
 	  (html:h2 "Simple API")
 	  (if (eq? 'en lang)
-		  (html:p "(Under developing. See graphics/gd.scm and example/*.scm if interested.)")
-		  (html:p "(開発中。興味のある方は graphics/gd.scm や example/*.scm を見てください。)"))
+		  (html:p "(Experimental. See graphics/gd.scm and example/*.scm if interested.)")
+		  (html:p "(まだ試験的なものです。興味のある方は graphics/gd.scm や example/*.scm を見てください。)"))
 	  (if (eq? 'en lang)
 		  (simple-api en)
 		  (simple-api ja))

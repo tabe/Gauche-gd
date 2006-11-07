@@ -1,3 +1,13 @@
+2006-11-07  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* example/pm0.scm, example/pm1.scm (main): prints the image on standard output like the original version.
+
+	* test.scm: section "parameter" and "read & write" added.
+
+	* doc/reference.scm: entries about current-gd-image-format, read-gd-image, write-as, write and display added. And some explanations revised.
+
+	* graphics_gd_io.c (graphicsGdIOCtxSeek, graphicsGdIOCtxTell): addresses the case "r == SCM_FALSE".
+
 2006-11-06  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* test.scm: modified a test for `write'
@@ -11,6 +21,10 @@
 	* graphics_gd.c: include graphics_gd_io.h. PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT and IMPROPER_GRAPHICS_GD_IMAGE_CREATE_PORT added.
 
 	* Makefile.in (graphics_gd_SRCS): graphics_gd_io.c added.
+
+2006-11-03  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* release 0.1.1.
 
 2006-11-02  Takeshi Abe  <tabe@fixedpoint.jp>
 

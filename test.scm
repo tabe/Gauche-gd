@@ -66,6 +66,15 @@
  (GD_RESOLUTION      96)
  )
 
+(test-section "parameter")
+(use gauche.parameter)
+(test* "current-gd-image-format" #t (and (is-a? current-gd-image-format <parameter>)
+										 (eq? 'gif (current-gd-image-format))))
+(test* "current-ft-font" #t (and (is-a? current-ft-font <parameter>) (not (current-ft-font))))
+(test* "current-ft-fg" #t (and (is-a? current-ft-fg <parameter>) (not (current-ft-fg))))
+(test* "current-ft-pt" 12 (and (is-a? current-ft-pt <parameter>) (current-ft-pt)))
+(test* "current-ft-angle" 0 (and (is-a? current-ft-angle <parameter>) (current-ft-angle)))
+
 (test-section "color")
 (define color #x789abcde)
 (test* "gd-true-color-get-alpha" #x78 (gd-true-color-get-alpha color))
@@ -138,11 +147,19 @@
 (save-as im0 (if (memq 'png *gd-features*)
 				 "test/im0.png"
 				 "test/im0.gif"))
-(define im1 (gd-image-square-to-circle im0 300))
+
+(test-section "read & write")
 (current-gd-image-format (if (memq 'png *gd-features*) 'png 'gif))
+(define im1
+  (call-with-input-file (format #f "test/im0.~a" (current-gd-image-format))
+	(lambda (iport)
+	  (read-gd-image iport))))
+(test* "read-gd-image" #t (is-a? im1 <gd-image>))
+(define im2 (gd-image-square-to-circle im1 300))
+(test* "gd-image-square-to-circle" #t (is-a? im2 <gd-image>))
 (call-with-output-file (format #f "test/im1.~a" (current-gd-image-format))
   (lambda (oport)
-	(write im1 oport))) ; it also test `write-as'
+	(write im2 oport))) ; it also test `write-as'
 
 (test-section "gdFont")
 (define *font-giant* (gd-font-get-giant))

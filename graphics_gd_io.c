@@ -75,7 +75,7 @@ graphicsGdIOCtxSeek(struct gdIOCtx *ctx, const int pos)
   ScmObj r;
   gCtx = (graphicsGdIOCtx *)ctx;
   r = Scm_PortSeek(gCtx->port, Scm_OffsetToInteger((off_t)pos), SEEK_SET);
-  return (Scm_GetInteger(r) == 0);
+  return !SCM_FALSEP(r);
 }
 
 static long
@@ -85,6 +85,7 @@ graphicsGdIOCtxTell(struct gdIOCtx *ctx)
   ScmObj r;
   gCtx = (graphicsGdIOCtx *)ctx;
   r = Scm_PortSeek(gCtx->port, Scm_OffsetToInteger((off_t)0), SEEK_CUR);
+  if (SCM_FALSEP(r)) return -1;
   return (long)Scm_GetInteger(r);
 }
 

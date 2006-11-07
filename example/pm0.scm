@@ -18,8 +18,7 @@
 
 	  (gd-image-fill im 50 50 red)
 
-	  (save-as im (if (memq 'png *gd-features*)
-					  "pm0.png"
-					  "pm0.gif"))
+	  (current-gd-image-format (if (memq 'png *gd-features*) 'png 'gif))
+	  (write im)
 	  ))
   0)

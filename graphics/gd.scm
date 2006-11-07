@@ -142,8 +142,10 @@
   (case fmt
 	((gif) (gd-image-create-gif-port port))
 	((jpg jpeg jpe) (gd-image-create-jpeg-port port))
-	((png)  (gd-image-create-png-port  port))
+	((png) (gd-image-create-png-port  port))
 	((wbmp) (gd-image-create-wbmp-port port))
+	((gd) (gd-image-create-gd-port port))
+	((gd2) (gd-image-create-gd2-port port))
 	(else (error "unknown format:" fmt))))
 
 (define-method write-object ((im <gd-image>) port)

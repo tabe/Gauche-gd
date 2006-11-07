@@ -7,7 +7,7 @@ GENERATED = dashed.gif dashed.png \
 
 example : $(SCMFILES)
 	for s in $(SCMFILES); do \
-		gosh -I.. $$s; \
+		gosh -I.. $$s > /dev/null; \
 		res=$$?; \
 		if test "$$res" != "0"; then \
 			exit $$res; \

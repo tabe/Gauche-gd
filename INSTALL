@@ -3,7 +3,7 @@ Basic
 
 It is necessary to:
 - use gauche 0.8.7 or later
-- have been installed the gd2 library
+- have been installed the gd2 library (version 2.0.28 or higher)
 
 It is recommended to:
 - have gdlib-config in PATH
@@ -27,3 +27,7 @@ If you do not have the gd2 library, then:
 * Fedora Core 5
 If you do not have the gd2 library, then:
 # yum install gd-devel
+
+* Cygwin
+I have succeeded in installing it with Cygwin DLL 1.5.21-1 (Windows XP).
+Good luck! :-)

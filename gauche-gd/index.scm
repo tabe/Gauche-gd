@@ -8,9 +8,10 @@
 (//
  (GD.pm "http://search.cpan.org/dist/GD/")
  (GD/Scheme "http://www196.pair.com/lisovsky/scheme/gd/index.html")
+ (FreeType "http://www.freetype.org/")
  )
 
-(define *last-update* "Thu Nov 03 2006")
+(define *last-update* "Tue Nov 07 2006")
 (define *gauche-gd-version* (file->string "../VERSION"))
 (define *gauche-gd-tarball-basename* (string-append "Gauche-gd-" *gauche-gd-version* ".tgz"))
 (define *gauche-gd-tarball-size* (file-size (string-append "../../" *gauche-gd-tarball-basename*)))
@@ -26,11 +27,12 @@
 	 (html:p :id "last_update" "Last update: " *last-update*)
 	 (html:p (html:dfn /Gauche-gd/)
 			 (en/ja
-				 (list " is an extension package of " /Gauche/ " which provides a binding of Boutell's " /GD/ "2 library.")
+				 (list " is an extension package of " /Gauche/ " which provides a binding of Thomas Boutell's " /GD/ "2 library.")
 				 (list " は " /Scheme/ " 処理系 " /Gauche/ " で " /GD/ "2 ライブラリを利用するための拡張パッケージです。")))
 
 	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "News" "最新情報"))
 	 (html:ul
+	  (html:li "[2006-11-07] " (en/ja "Release 0.1.2." "バージョン 0.1.2 を公開しました。"))
 	  (html:li "[2006-11-03] " (en/ja "Release 0.1.1." "バージョン 0.1.1 を公開しました。"))
 	  (html:li "[2006-10-28] " (en/ja "Some links added." "リンクを追加しました。"))
 	  (html:li "[2006-10-26] " (en/ja "Release 0.1.0." "バージョン 0.1.0 を公開しました。")))
@@ -39,8 +41,14 @@
 	 (html:ul
 	  (html:li (en/ja "Through a straitforward API you can call a C function or macro directly."
 					  "対応する手続きによって直接 C の関数やマクロを呼ぶことができます。"))
-	  (html:li (en/ja "A simpler interface (in future)."
-					  "高レベルなインターフェース(開発中)")))
+	  (html:li (en/ja "A simpler interface (experimental):"
+					  "高レベルなインターフェース(開発中):")
+			   (html:ul
+				(html:li (en/ja (list "Printing a Scheme string containing possible multibyte characters with a " /FreeType/ " font")
+								(list /FreeType/ " フォントによるマルチバイト文字を含む Scheme 文字列の表示")))
+				(html:li (en/ja "I/O through gdIOCtx compatible ports"
+								"gdIOCtx 互換の port による入出力")))
+				))
 
 	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "Requirements" "導入"))
 	 (html:p (en/ja "This package is for Gauche 0.8.7 or later."
@@ -66,7 +74,7 @@
 	  (html:li (html:a :href "http://newcenturycomputers.net/projects/gdmodule.html" "gdmodule - Python GD module"))
 	  (html:li (html:a :href "http://raa.ruby-lang.org/project/ruby-gd/" "ruby-gd"))
 	  (html:li /GD/Scheme/)
-	  (en/ja ""
+	  (en/ja '()
 			 (html:li (html:a :href "http://practical-scheme.net/wiliki/wiliki.cgi?Gauche%3a%e6%8b%a1%e5%bc%b5%e3%83%a9%e3%82%a4%e3%83%96%e3%83%a9%e3%83%aa%e5%85%a5%e9%96%80" "Gauche:拡張ライブラリ入門")))
 	  )
 	 )))
