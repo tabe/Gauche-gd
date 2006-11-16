@@ -1,4 +1,12 @@
+2006-11-09  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* doc/reference.scm: entry about with-gd-image-format added.
+
+	* graphics/gd.scm: with-gd-image-format added.
+
 2006-11-07  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* release 0.1.2.
 
 	* example/pm0.scm, example/pm1.scm (main): prints the image on standard output like the original version.
 

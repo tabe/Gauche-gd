@@ -4,8 +4,8 @@
 (use text.html-lite)
 (use text.tree)
 
-(define *version* "0.1.2")
-(define *last-update* "Tue Nov 07 2006")
+(define *version* "0.1.3")
+(define *last-update* "Thu Nov 09 2006")
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
@@ -294,6 +294,10 @@
 		((parameter current-gd-image-format)
 		 ("It is expected to keep a symbol which decides the image format taken with \"read-gd-image\" and/or \"write\" unless specified.")
 		 ("GD のイメージは本来特定のフォーマットに依存しない形に抽象化されていますが、入出力を行う際に特定のフォーマットが前提になっていることがよくあります。\"read-gd-image\" や \"write\" は このパラメータの値を参照するので、そういった場合に利用できます。"))
+
+		((procedure (with-gd-image-format fmt thunk))
+		 ("Call `thunk' with the parameterized \"current-gd-image-format\" of value `fmt'.")
+		 ("上記の \"current-gd-image-format\" の値を一時的に `fmt' にして `thunk' を呼びます。戻ると \"current-gd-image-format\" の値は復元されます。`thunk' の戻り値がこの手続きの戻り値です。"))
 
 		((method (read-gd-image (port <port>) &optional (fmt <symbol>)))
 		 ("Read a image with or without format `fmt' (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", and \"gd2\"). See also \"current-gd-image-format\".")

@@ -92,7 +92,7 @@
 		  <gd-error>
 		  destroy!
 		  set-pixel! get-pixel
-		  current-gd-image-format
+		  current-gd-image-format with-gd-image-format
 		  read-gd-image
 		  write-object
 		  write-as
@@ -135,6 +135,9 @@
 (define-constant gdFTEX_Big5      2)
 
 (define current-gd-image-format (make-parameter 'gif))
+(define (with-gd-image-format fmt thunk)
+  (parameterize ((current-gd-image-format fmt))
+	(thunk)))
 
 (define-method read-gd-image ((port <port>))
   (read-gd-image port (current-gd-image-format)))
