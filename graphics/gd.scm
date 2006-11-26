@@ -104,6 +104,7 @@
 		  color-allocate! color-closest color-exact! color-resolve! color-deallocate!
 		  true-color->palette true-color->palette!
 		  color-transparent! palette-copy!
+		  gif-anim-begin gif-anim-add gif-anim-end gif-anim-with
 		  arc! ellipse! fill! copy!
 		  set-brush! set-tile! set-anti-aliased! set-style! set-thickness! interlace! alpha-blending! save-alpha!
 		  get-width get-height
@@ -278,6 +279,21 @@
 (define-method true-color->palette! ((im <gd-image>) (ditherFlag <integer>) (colorsWanted <integer>))
   (gd-image-true-color-to-palette im ditherFlag colorsWanted)
   im)
+
+(define-method gif-anim-begin ((im <gd-image>) (oport <port>) (GlobalCM <integer>) (loops <integer>))
+  (gd-image-gif-anim-begin-port im oport GlobalCM loops))
+(define-method gif-anim-add ((im <gd-image>) (oport <port>) (localCM <integer>) (LeftOfs <integer>) (TopOfs <integer>) (Delay <integer>) (Disposal <integer>) (previm <gd-image>))
+  (gd-image-gif-anim-add-port im oport localCM LeftOfs TopOfs Delay Disposal previm))
+(define-method gif-anim-add ((im <gd-image>) (oport <port>) (localCM <integer>) (LeftOfs <integer>) (TopOfs <integer>) (Delay <integer>) (Disposal <integer>))
+  (gd-image-gif-anim-add-port im oport localCM LeftOfs TopOfs Delay Disposal #f))
+(define-method gif-anim-end ((oport <port>))
+  (gd-image-gif-anim-end-port oport))
+(define (gif-anim-with im oport thunk . rest)
+  (let-keywords* rest ((global-cm -1)
+					   (loop -1))
+	(gd-image-gif-anim-begin-port im oport global-cm loop)
+	(thunk)
+	(gd-image-gif-anim-end-port oport)))
 
 (define-method color-transparent! ((im <gd-image>) (color <integer>))
   (gd-image-color-transparent im color))

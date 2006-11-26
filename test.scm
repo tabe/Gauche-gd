@@ -239,6 +239,36 @@
 	(273 .  58)
 	( 29 .  58))))
 
+(test-section "GIF Animation")
+; See the explanation on gdImageGifAnimBegin* in http://www.boutell.com/gd/manual2.0.33.html
+(define im (gd-image-create 100 100))
+(define white (gd-image-color-allocate im 255 255 255))
+(define black (gd-image-color-allocate im 0 0 0))
+(define trans (gd-image-color-allocate im 1 1 1))
+(gd-image-rectangle im 0 0 10 10 black)
+(call-with-output-file "test/anim.gif"
+  (lambda (oport)
+	(gif-anim-with
+	 im oport
+	 (lambda ()
+	   (gif-anim-add im oport 0 0 0 100 1)
+	   (let ((im2 (gd-image-create 100 100)))
+		 (gd-image-color-allocate im2 255 255 255)
+		 (gd-image-palette-copy im2 im)
+		 (gd-image-rectangle im2 0 0 15 15 black)
+		 (gd-image-color-transparent im2 trans)
+		 (gif-anim-add im2 oport 0 0 0 100 1 im)
+		 (let ((im3 (gd-image-create 100 100)))
+		   (gd-image-color-allocate im3 255 255 255)
+		   (gd-image-palette-copy im3 im)
+		   (gd-image-rectangle im3 0 0 15 20 black)
+		   (gd-image-color-transparent im3 trans)
+		   (gif-anim-add im3 oport 0 0 0 100 1 im2))))
+	 :global-cm 1
+	 :loop 3
+	 )))
+(test* "gif-anim-with" #t (is-a? (call-with-input-file "test/anim.gif" (cut read-gd-image <> 'gif)) <gd-image>))
+
 (test-section "GD Features")
 (format #t "*gd-features*: ~s\n" *gd-features*)
 (test-section "GD Version")

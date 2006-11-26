@@ -11,7 +11,7 @@
  (FreeType "http://www.freetype.org/")
  )
 
-(define *last-update* "Tue Nov 07 2006")
+(define *last-update* "Mon Nov 27 2006")
 (define *gauche-gd-version* (file->string "../VERSION"))
 (define *gauche-gd-tarball-basename* (string-append "Gauche-gd-" *gauche-gd-version* ".tgz"))
 (define *gauche-gd-tarball-size* (file-size (string-append "../../" *gauche-gd-tarball-basename*)))
@@ -32,6 +32,10 @@
 
 	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "News" "最新情報"))
 	 (html:ul
+	  (html:li "[2006-11-27] " (en/ja "Release 0.1.3. API for GIF Animations available."
+									  "バージョン 0.1.3 を公開しました。GIF アニメーションをサポートしました。"))
+	  (html:li "[2006-11-16] " (en/ja "It is confirmed that the current version 0.1.2 runs on Gauche 0.8.8."
+									  "Gauche 0.8.8 で現在のバージョン 0.1.2 が動作することを確認しました。"))
 	  (html:li "[2006-11-07] " (en/ja "Release 0.1.2." "バージョン 0.1.2 を公開しました。"))
 	  (html:li "[2006-11-03] " (en/ja "Release 0.1.1." "バージョン 0.1.1 を公開しました。"))
 	  (html:li "[2006-10-28] " (en/ja "Some links added." "リンクを追加しました。"))
@@ -47,7 +51,9 @@
 				(html:li (en/ja (list "Printing a Scheme string containing possible multibyte characters with a " /FreeType/ " font")
 								(list /FreeType/ " フォントによるマルチバイト文字を含む Scheme 文字列の表示")))
 				(html:li (en/ja "I/O through gdIOCtx compatible ports"
-								"gdIOCtx 互換の port による入出力")))
+								"gdIOCtx 互換の port による入出力"))
+				(html:li (en/ja "Generating GIF Animations"
+								"GIF アニメーションの生成")))
 				))
 
 	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "Requirements" "導入"))

@@ -56,7 +56,7 @@ graphicsGdIOCtxPutC(struct gdIOCtx *ctx, int a)
 {
   graphicsGdIOCtx *gCtx;
   gCtx = (graphicsGdIOCtx *)ctx;
-  Scm_Putc((ScmChar)SCM_MAKE_CHAR(a), gCtx->port);
+  SCM_PUTB((ScmByte)a, gCtx->port);
 }
 
 static int

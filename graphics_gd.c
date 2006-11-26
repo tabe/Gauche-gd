@@ -308,6 +308,38 @@ PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(Gd2, (im, f, 0, GD2_FMT_COMPRESSED))
 #undef PROPER_GRAPHICS_GD_IMAGE_SAVE_AS
 #undef IMPROPER_GRAPHICS_GD_IMAGE_SAVE_AS
 
+void
+graphicsGdImageGifAnimBeginPort(gdImage *im, ScmPort *oport, int GlobalCM, int loops)
+{
+  gdIOCtx *ctx;
+  SCM_ASSERT(SCM_OPORTP(oport));
+  if ( (ctx = graphicsGdGetIOCtxFromPort(oport)) == NULL) {
+	graphicsGdRaiseCondition("could not get gdIOCtx: %s", "graphicsGdImageGifAnimBeginPort");
+	return;
+  }
+  gdImageGifAnimBeginCtx(im, ctx, GlobalCM, loops);
+  (ctx->gd_free)(ctx);
+}
+
+void
+graphicsGdImageGifAnimAddPort(gdImage *im, ScmPort *oport, int localCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImage *previm)
+{
+  gdIOCtx *ctx;
+  SCM_ASSERT(SCM_OPORTP(oport));
+  if ( (ctx = graphicsGdGetIOCtxFromPort(oport)) == NULL) {
+	graphicsGdRaiseCondition("could not get gdIOCtx: %s", "graphicsGdImageGifAnimAddPort");
+	return;
+  }
+  gdImageGifAnimAddCtx(im, ctx, localCM, LeftOfs, TopOfs, Delay, Disposal, previm);
+  (ctx->gd_free)(ctx);
+}
+
+void
+graphicsGdImageGifAnimEndPort(ScmPort *oport)
+{
+  SCM_PUTC(';', oport);
+}
+
 #define DEFINE_GRAPHICS_GD_IMAGE_POLYGON(name) void						\
   graphicsGdImage ## name(gdImage *im, ScmObj points, int pointsTotal, int color) \
   {																		\

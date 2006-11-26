@@ -224,6 +224,18 @@
 (define-cproc gd-image-write-as-jpeg (im::<gd-image> oport::<output-port>)
   (call <void> "graphicsGdImageWriteAsJpeg"))
 
+(define-enum gdDisposalUnknown)
+(define-enum gdDisposalNone)
+(define-enum gdDisposalRestoreBackground)
+(define-enum gdDisposalRestorePrevious)
+
+(define-cproc gd-image-gif-anim-begin-port (im::<gd-image> oport::<output-port> GlobalCM::<fixnum> loops::<int32>)
+  (call <void> "graphicsGdImageGifAnimBeginPort"))
+(define-cproc gd-image-gif-anim-add-port (im::<gd-image> oport::<output-port> localCM::<fixnum> LeftOfs::<fixnum> TopOfs::<fixnum> Delay::<int32> Disposal::<fixnum> previm::<gd-image>?)
+  (call <void> "graphicsGdImageGifAnimAddPort"))
+(define-cproc gd-image-gif-anim-end-port (oport::<output-port>)
+  (call <void> "graphicsGdImageGifAnimEndPort"))
+
 (define-cproc gd-image-save-as-gif (im::<gd-image> path::<const-cstring>)
   (call <fixnum> "graphicsGdImageSaveAsGif"))
 (define-cproc gd-image-save-as-png (im::<gd-image> path::<const-cstring>)

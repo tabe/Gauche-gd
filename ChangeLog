@@ -1,3 +1,19 @@
+2006-11-27  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* release 0.1.3.
+
+	* doc/reference.scm: entries on gif-anim-* added.
+
+	* Makefile.in (TEST_GENERATED): test/anim.gif added.
+
+	* test.scm: section "GIF Animation" added.
+
+	* graphics/gd.scm: gif-anim-begin, gif-anim-add, gif-anim-end, and gif-anim-with added.
+
+	* graphics_gd.c: graphicsGdImageGifAnimBeginPort, graphicsGdImageGifAnimAddPort, and graphicsGdImageGifAnimEndPort added.
+
+	* graphics_gd_io.c (graphicsGdIOCtxPutC): the bug yieling redundant bytes fixed.
+
 2006-11-09  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* doc/reference.scm: entry about with-gd-image-format added.

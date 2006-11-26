@@ -5,7 +5,7 @@
 (use text.tree)
 
 (define *version* "0.1.3")
-(define *last-update* "Thu Nov 09 2006")
+(define *last-update* "Mon Nov 27 2006")
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
@@ -342,6 +342,18 @@
 		((procedure (with-ft-font/fg/pt/angle font fg pt angle thunk))
 		 ("Call `thunk' with parameterized current-ft-font, current-ft-fg, current-ft-pt, and current-ft-angle. Its return value is `thunk''s one.")
 		 ("current-ft-font, current-ft-fg, current-ft-pt, current-ft-angle を与えられた値にして `thunk' を呼びます。戻ると `thunk' からの戻り値を返し、current-ft-* の値は復元されます。"))
+
+		((method (gif-anim-begin (im <gd-image>) (oport <port>) (GlobalCM <integer>) (loops <integer>))
+				 (gif-anim-add (im <gd-image>) (oport <port>) (localCM <integer>) (LeftOfs <integer>) (TopOfs <integer>) (Delay <integer>) (Disposal <integer>) &optional (previm <gd-image>))
+				 (gif-anim-end (oport <port>)))
+		 ("Create and output a GIF Animation. In case of calling gif-anim-add without the last argument `previm', GD does not optimize the resulting frames."
+		  "Rather than a pair of gif-anim-begin and gif-anim-end, gif-anim-with is often preferable.")
+		 ("これらのメソッドによって GIF アニメーションを出力します。gif-anim-add の最後の引数を省略した場合、GD は自動的な最適化を行いません。"
+		  "gif-anim-end と gif-anim-end を対にして使うより、手続き gif-anim-with を利用することを勧めます。"))
+
+		((procedure (gif-anim-with im oport thunk &keyword global-cm loop))
+		 ("Call `thunk' with gif-anim-began `im' and `port'. Before returning the procedure successfully, gif-anim-end is called expectedly.")
+		 ("この手続きは、まず `im' と `port' とキーワードに与えられた値を引数にして gif-anim-begin を呼び、その上で `thunk' を呼びます。無事に手続きから戻る前に gif-anim-end を呼びます。"))
 		))
 
 (define (document-tree lang)

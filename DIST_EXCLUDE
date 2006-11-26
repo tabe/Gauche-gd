@@ -3,3 +3,6 @@ Gauche-gd.gpd
 autom4te.cache
 gauche-gd
 recompile.sh
+test/anim
+test/anim.c
+test/anim.gif
