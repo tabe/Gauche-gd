@@ -80,18 +80,12 @@ graphicsGdRaiseCondition(const char *msg, const char *arg)
 					 msg, arg);
 }
 
-#define PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM(fmt) int				\
-  graphicsGdImageCreateFrom ## fmt(gdImage **dst, const char *path)	\
-  {																	\
-	FILE *f;														\
-	struct flock fl;												\
-	int fd;															\
-	gdImage *im;													\
-	if ( (f = fopen(path, "rb")) == NULL) {							\
+#define F_OPEN_AND_LOCK(f, fl, fd, path, flag, type) do {			\
+	if ( (f = fopen(path, flag)) == NULL) {							\
 	  graphicsGdRaiseCondition("could not open file: %s", path);	\
 	  return -1;													\
 	}																\
-	fl.l_type = F_RDLCK;											\
+	fl.l_type = type;												\
 	fl.l_whence = SEEK_SET;											\
 	fl.l_start = fl.l_len = 0;										\
 	fd = fileno(f);													\
@@ -99,13 +93,39 @@ graphicsGdRaiseCondition(const char *msg, const char *arg)
 	  graphicsGdRaiseCondition("could not lock file: %s", path);	\
 	  return -2;													\
 	}																\
-	*dst = gdImageCreateFrom ## fmt(f);								\
+  } while (0)
+
+#define F_CLOSE_AND_RETURN(f, path) do {							\
 	if (fclose(f) == 0) {											\
 	  return 0;														\
 	} else {														\
 	  graphicsGdRaiseCondition("could not close file: %s", path);	\
 	  return -3;													\
 	}																\
+  } while (0)
+
+#define CALL_WITH_F4(path, flag, type, exp) do {	\
+	FILE *f;										\
+	struct flock fl;								\
+	int fd;											\
+	F_OPEN_AND_LOCK(f, fl, fd, path, flag, type);	\
+	(exp);											\
+	F_CLOSE_AND_RETURN(f, path);					\
+  } while (0)
+
+#define CALL_WITH_F5(path, flag, type, exp, val) do {	\
+	FILE *f;											\
+	struct flock fl;									\
+	int fd;												\
+	F_OPEN_AND_LOCK(f, fl, fd, path, flag, type);		\
+	(val) = (exp);										\
+	F_CLOSE_AND_RETURN(f, path);						\
+  } while (0)
+
+#define PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM(fmt) int					\
+  graphicsGdImageCreateFrom ## fmt(gdImage **dst, const char *path)		\
+  {																		\
+	CALL_WITH_F5(path, "rb", F_RDLCK, gdImageCreateFrom ## fmt(f), *dst); \
   }
 
 #define IMPROPER_GRAPHICS_GD_IMAGE_CREATE_FROM(fmt) int				\
@@ -138,6 +158,14 @@ PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM(Gd)
 PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM(Gd2)
 
 int
+graphicsGdImageCreateFromGd2Part(gdImage **dst, const char *path, int srcx, int srcy, int w, int h)
+{
+  CALL_WITH_F5(path, "rb", F_RDLCK, gdImageCreateFromGd2Part(f, srcx, srcy, w, h), *dst);
+}
+
+PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM(Xbm)
+
+int
 graphicsGdImageCreateFromXpm(gdImage **dst, const char *path)
 {
 #ifdef GD_XPM
@@ -160,19 +188,37 @@ graphicsGdImageCreateFromXpm(gdImage **dst, const char *path)
 #undef PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM
 #undef IMPROPER_GRAPHICS_GD_IMAGE_CREATE_FROM
 
+#define CALL_WITH_ICTX(port, exp, alt, val, func) do {				\
+	gdIOCtx *ctx;													\
+	SCM_ASSERT(SCM_IPORTP(port));									\
+	if ( (ctx = graphicsGdGetIOCtxFromPort(port)) == NULL) {		\
+	  graphicsGdRaiseCondition("could not get gdIOCtx: %s", #func);	\
+	  (val) = (alt);												\
+	  return -1;													\
+	}																\
+	(val) = (exp);													\
+	return 0;														\
+  } while (0)
+
+/* #define PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(fmt) int					\ */
+/*   graphicsGdImageCreate ## fmt ## Port(gdImage **dst, ScmPort *port)	\ */
+/*   {																		\ */
+/* 	gdIOCtx *ctx;														\ */
+/* 	SCM_ASSERT(SCM_IPORTP(port));										\ */
+/* 	if ( (ctx = graphicsGdGetIOCtxFromPort(port)) == NULL) {			\ */
+/* 	  graphicsGdRaiseCondition("could not get gdIOCtx: graphicsGdImageCreate%sPort", #fmt);	\ */
+/* 	  *dst = (gdImage *)NULL;											\ */
+/* 	  return -1;														\ */
+/* 	}																	\ */
+/* 	*dst = gdImageCreateFrom ## fmt ## Ctx(ctx);						\ */
+/* 	return 0;															\ */
+/*   } */
 #define PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(fmt) int					\
   graphicsGdImageCreate ## fmt ## Port(gdImage **dst, ScmPort *port)	\
   {																		\
-	gdIOCtx *ctx;														\
-	SCM_ASSERT(SCM_IPORTP(port));										\
-	if ( (ctx = graphicsGdGetIOCtxFromPort(port)) == NULL) {			\
-	  graphicsGdRaiseCondition("could not get gdIOCtx: graphicsGdImageCreate%sPort", #fmt);	\
-	  *dst = (gdImage *)NULL;											\
-	  return -1;														\
-	}																	\
-	*dst = gdImageCreateFrom ## fmt ## Ctx(ctx);						\
-	return 0;															\
+	CALL_WITH_ICTX(port, gdImageCreateFrom ## fmt ## Ctx(ctx), (gdImage *)NULL, *dst, graphicsGdImageCreate ## fmt ## Port); \
   }
+
 #define IMPROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(fmt) int					\
   graphicsGdImageCreate ## fmt ## Port(gdImage **dst, ScmPort *port)	\
   {																		\
@@ -203,20 +249,30 @@ PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(WBMP)
 PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Gd)
 PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Gd2)
 
+int
+graphicsGdImageCreateGd2PartPort(gdImage **dst, ScmPort *port, int srcx, int srcy, int w, int h)
+{
+  CALL_WITH_ICTX(port, gdImageCreateFromGd2PartCtx(ctx, srcx, srcy, w, h), (gdImage *)NULL, *dst, graphicsGdImageCreateGd2PartPort);
+}
+
 #undef PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT
 #undef IMPROPER_GRAPHICS_GD_IMAGE_CREATE_PORT
+
+#define CALL_WITH_OCTX(port, exp, func) do {						\
+	gdIOCtx *ctx;													\
+	SCM_ASSERT(SCM_OPORTP(port));									\
+	if ( (ctx = graphicsGdGetIOCtxFromPort(port)) == NULL) {		\
+	  graphicsGdRaiseCondition("could not get gdIOCtx: %s", #func);	\
+	  return;														\
+	}																\
+	(exp);															\
+	(ctx->gd_free)(ctx);											\
+  } while (0)
 
 #define PROPER_GRAPHICS_GD_IMAGE_WRITE_AS(fmt, args) void				\
   graphicsGdImageWriteAs ## fmt(gdImage *im, ScmPort *port)				\
   {																		\
-	gdIOCtx *ctx;														\
-	SCM_ASSERT(SCM_OPORTP(port));										\
-	if ( (ctx = graphicsGdGetIOCtxFromPort(port)) == NULL) {			\
-	  graphicsGdRaiseCondition("could not get gdIOCtx: graphicsGdImageWriteAs%s", #fmt); \
-	  return;															\
-	}																	\
-	gdImage ## fmt ## Ctx args;											\
-	(ctx->gd_free)(ctx);												\
+	CALL_WITH_OCTX(port, gdImage ## fmt ## Ctx args, graphicsGdImageWriteAs ## fmt); \
   }
 
 #define IMPROPER_GRAPHICS_GD_IMAGE_WRITE_AS(fmt) void			\
@@ -225,13 +281,21 @@ PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(Gd2)
 	graphicsGdRaiseCondition("unsupported format: %s", #fmt);	\
   }
 
+void
+graphicsGdImageWriteAsJpeg(gdImage *im, ScmPort *port, int quality)
+{
 #ifdef GD_JPEG
-PROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Jpeg, (im, ctx, -1))
+  CALL_WITH_OCTX(port, gdImageJpegCtx(im, ctx, quality), graphicsGdImageWriteAsJpeg);
 #else
-IMPROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Jpeg)
+  graphicsGdRaiseCondition("unsupported format: %s", "Jpeg");
 #endif /* GD_JPEG */
+}
 
-PROPER_GRAPHICS_GD_IMAGE_WRITE_AS(WBMP, (im, -1, ctx))
+void
+graphicsGdImageWriteAsWBMP(gdImage *im, int fg, ScmPort *port)
+{
+  CALL_WITH_OCTX(port, gdImageWBMPCtx(im, fg, ctx), graphicsGdImageWriteAsWBMP);
+}
 
 #ifdef GD_PNG
 PROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Png, (im, ctx))
@@ -251,28 +315,7 @@ IMPROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Gif)
 #define PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(fmt, args) int				\
   graphicsGdImageSaveAs ## fmt(gdImage *im, const char *path)		\
   {																	\
-	FILE *f;														\
-	struct flock fl;												\
-	int fd;															\
-	if ( (f = fopen(path, "wb")) == NULL) {							\
-	  graphicsGdRaiseCondition("could not open file: %s", path);	\
-	  return -1;													\
-	}																\
-	fl.l_type = F_WRLCK;											\
-	fl.l_whence = SEEK_SET;											\
-	fl.l_start = fl.l_len = 0;										\
-	fd = fileno(f);													\
-	if (fcntl(fd, F_SETLKW, &fl) != 0) {							\
-	  graphicsGdRaiseCondition("could not lock file: %s", path);	\
-	  return -2;													\
-	}																\
-	gdImage ## fmt args;											\
-	if (fclose(f) == 0) {											\
-	  return 0;														\
-	} else {														\
-	  graphicsGdRaiseCondition("could not close file: %s", path);	\
-	  return -3;													\
-	}																\
+	CALL_WITH_F4(path, "wb", F_WRLCK, gdImage ## fmt args);			\
   }
 
 #define IMPROPER_GRAPHICS_GD_IMAGE_SAVE_AS(fmt) int				\
@@ -282,13 +325,22 @@ IMPROPER_GRAPHICS_GD_IMAGE_WRITE_AS(Gif)
 	return -1;													\
   }
 
+int
+graphicsGdImageSaveAsJpeg(gdImage *im, const char *path, int quality)
+{
 #ifdef GD_JPEG
-PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(Jpeg, (im, f, -1))
+  CALL_WITH_F4(path, "wb", F_WRLCK, gdImageJpeg(im, f, quality));
 #else
-IMPROPER_GRAPHICS_GD_IMAGE_SAVE_AS(Jpeg)
+  graphicsGdRaiseCondition("unsupported format: %s", "Jpeg");
+  return -1;
 #endif /* GD_JPEG */
+}
 
-PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(WBMP, (im, -1, f))
+int
+graphicsGdImageSaveAsWBMP(gdImage* im, int fg, const char *path)
+{
+  CALL_WITH_F4(path, "wb", F_WRLCK, gdImageWBMP(im, fg, f));
+}
 
 #ifdef GD_PNG
 PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(Png, (im, f))
@@ -303,7 +355,12 @@ IMPROPER_GRAPHICS_GD_IMAGE_SAVE_AS(Gif)
 #endif /* GD_GIF */
 
 PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(Gd, (im, f))
-PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(Gd2, (im, f, 0, GD2_FMT_COMPRESSED))
+
+int
+graphicsGdImageSaveAsGd2(gdImage* im, const char *path, int chunkSize, int fmt)
+{
+  CALL_WITH_F4(path, "wb", F_WRLCK, gdImageGd2(im, f, chunkSize, fmt));
+}
 
 #undef PROPER_GRAPHICS_GD_IMAGE_SAVE_AS
 #undef IMPROPER_GRAPHICS_GD_IMAGE_SAVE_AS
@@ -311,27 +368,13 @@ PROPER_GRAPHICS_GD_IMAGE_SAVE_AS(Gd2, (im, f, 0, GD2_FMT_COMPRESSED))
 void
 graphicsGdImageGifAnimBeginPort(gdImage *im, ScmPort *oport, int GlobalCM, int loops)
 {
-  gdIOCtx *ctx;
-  SCM_ASSERT(SCM_OPORTP(oport));
-  if ( (ctx = graphicsGdGetIOCtxFromPort(oport)) == NULL) {
-	graphicsGdRaiseCondition("could not get gdIOCtx: %s", "graphicsGdImageGifAnimBeginPort");
-	return;
-  }
-  gdImageGifAnimBeginCtx(im, ctx, GlobalCM, loops);
-  (ctx->gd_free)(ctx);
+  CALL_WITH_OCTX(oport, gdImageGifAnimBeginCtx(im, ctx, GlobalCM, loops), graphicsGdImageGifAnimBeginPort);
 }
 
 void
 graphicsGdImageGifAnimAddPort(gdImage *im, ScmPort *oport, int localCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImage *previm)
 {
-  gdIOCtx *ctx;
-  SCM_ASSERT(SCM_OPORTP(oport));
-  if ( (ctx = graphicsGdGetIOCtxFromPort(oport)) == NULL) {
-	graphicsGdRaiseCondition("could not get gdIOCtx: %s", "graphicsGdImageGifAnimAddPort");
-	return;
-  }
-  gdImageGifAnimAddCtx(im, ctx, localCM, LeftOfs, TopOfs, Delay, Disposal, previm);
-  (ctx->gd_free)(ctx);
+  CALL_WITH_OCTX(oport, gdImageGifAnimAddCtx(im, ctx, localCM, LeftOfs, TopOfs, Delay, Disposal, previm), graphicsGdImageGifAnimAddPort);
 }
 
 void

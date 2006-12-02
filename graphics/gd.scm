@@ -43,8 +43,9 @@
 		  gd-alpha-blend
 		  gdStyled gdBrushed gdStyledBrushed gdTiled gdTransparent gdAntiAliased
 		  gd-image-create gd-image-create-palette gd-image-create-true-color
-		  gd-image-create-from-png gd-image-create-from-gif gd-image-create-from-jpeg gd-image-create-from-xpm
-		  gd-image-create-from-wbmp gd-image-create-from-gd gd-image-create-from-gd2
+		  gd-image-create-from-png gd-image-create-from-gif gd-image-create-from-jpeg
+		  gd-image-create-from-xbm gd-image-create-from-xpm gd-image-create-from-wbmp
+		  gd-image-create-from-gd gd-image-create-from-gd2 gd-image-create-from-gd2-part
 		  gd-image-destroy
 		  gd-image-set-pixel gd-image-get-pixel gd-image-get-true-color-pixel
 		  gd-image-line gd-image-rectangle gd-image-filled-rectangle
@@ -142,25 +143,38 @@
 
 (define-method read-gd-image ((port <port>))
   (read-gd-image port (current-gd-image-format)))
-(define-method read-gd-image ((port <port>) (fmt <symbol>))
+(define-method read-gd-image ((port <port>) (fmt <symbol>) . rest)
   (case fmt
 	((gif) (gd-image-create-gif-port port))
 	((jpg jpeg jpe) (gd-image-create-jpeg-port port))
 	((png) (gd-image-create-png-port  port))
 	((wbmp) (gd-image-create-wbmp-port port))
 	((gd) (gd-image-create-gd-port port))
-	((gd2) (gd-image-create-gd2-port port))
+	((gd2)
+	 (let-keywords* rest ((x #f)
+						  (y #f)
+						  (w #f)
+						  (h #f))
+	   (if (and x y w h)
+		   (gd-image-create-gd2-part-port port x y w h)
+		   (gd-image-create-gd2-port port))))
 	(else (error "unknown format:" fmt))))
 
 (define-method write-object ((im <gd-image>) port)
   (write-as im (current-gd-image-format) port))
 
-(define-method write-as ((im <gd-image>) (fmt <symbol>) port)
+(define-method write-as ((im <gd-image>) (fmt <symbol>) port . rest)
   (case fmt
-	((gif) (gd-image-write-as-gif im port))
-	((jpg jpeg jpe) (gd-image-write-as-jpeg im port))
-	((png)  (gd-image-write-as-png im port))
-	((wbmp) (gd-image-write-as-wbmp im port))
+	((gif)
+	 (gd-image-write-as-gif im port))
+	((jpg jpeg jpe)
+	 (let-keywords* rest ((quality -1))
+	   (gd-image-write-as-jpeg im port quality)))
+	((png)
+	 (gd-image-write-as-png im port))
+	((wbmp)
+	 (let-keywords* rest ((foreground -1))
+	   (gd-image-write-as-wbmp im foreground port)))
 	(else (error "unknown format:" fmt))))
 
 (define-method save-as ((im <gd-image>) (path <string>))
@@ -168,15 +182,26 @@
 	(if (= 1 (length s))
 		(gd-image-save-as-gd2 im path)
 		(save-as im path (string->symbol (car (last-pair s)))))))
-(define-method save-as ((im <gd-image>) (path <string>) (fmt <symbol>))
+(define-method save-as ((im <gd-image>) (path <string>) (fmt <symbol>) . rest)
   (case fmt
-	((gif)  (gd-image-save-as-gif  im path))
-	((jpg jpeg jpe) (gd-image-save-as-jpeg im path))
-	((png)  (gd-image-save-as-png  im path))
-	((wbmp) (gd-image-save-as-wbmp im path))
-	((gd)   (gd-image-save-as-gd   im path))
-	((gd2)  (gd-image-save-as-gd2  im path))
-	(else   (error "unkown format:" fmt))))
+	((gif)
+	 (gd-image-save-as-gif im path))
+	((jpg jpeg jpe)
+	 (let-keywords* rest ((quality -1))
+	   (gd-image-save-as-jpeg im path quality)))
+	((png)
+	 (gd-image-save-as-png im path))
+	((wbmp)
+	 (let-keywords* rest ((foreground -1))
+	   (gd-image-save-as-wbmp im foreground path)))
+	((gd)
+	 (gd-image-save-as-gd im path))
+	((gd2)
+	 (let-keywords* rest ((chunk-size 0)
+						  (compress #t))
+	   (gd-image-save-as-gd2 im path chunk-size (if compress GD2_FMT_COMPRESSED GD2_FMT_RAW))))
+	(else
+	 (error "unkown format:" fmt))))
 
 (define-method destroy! ((im <gd-image>))
   (gd-image-destroy im))

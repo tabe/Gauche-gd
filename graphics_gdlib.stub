@@ -83,6 +83,10 @@
   (body <gd-image> "graphicsGdImageCreateFromGd(&SCM_RESULT, path);"))
 (define-cproc gd-image-create-from-gd2 (path::<const-cstring>)
   (body <gd-image> "graphicsGdImageCreateFromGd2(&SCM_RESULT, path);"))
+(define-cproc gd-image-create-from-gd2-part (path::<const-cstring> srcx::<fixnum> srcy::<fixnum> w::<fixnum> h::<fixnum>)
+  (body <gd-image> "graphicsGdImageCreateFromGd2Part(&SCM_RESULT, path, srcx, srcy, w, h);"))
+(define-cproc gd-image-create-from-xbm (path::<const-cstring>)
+  (body <gd-image> "graphicsGdImageCreateFromXbm(&SCM_RESULT, path);"))
 (define-cproc gd-image-create-from-xpm (path::<const-cstring>)
   (body <gd-image> "graphicsGdImageCreateFromXpm(&SCM_RESULT, path);"))
 
@@ -98,6 +102,8 @@
   (body <gd-image> "graphicsGdImageCreateGdPort(&SCM_RESULT, iport);"))
 (define-cproc gd-image-create-gd2-port (iport::<input-port>)
   (body <gd-image> "graphicsGdImageCreateGd2Port(&SCM_RESULT, iport);"))
+(define-cproc gd-image-create-gd2-part-port (iport::<input-port> srcx::<fixnum> srcy::<fixnum> w::<fixnum> h::<fixnum>)
+  (body <gd-image> "graphicsGdImageCreateGd2PartPort(&SCM_RESULT, iport, srcx, srcy, w, h);"))
 
 (define-cproc gd-image-destroy (im::<gd-image>)
   (body <void>
@@ -219,9 +225,9 @@
   (call <void> "graphicsGdImageWriteAsGif"))
 (define-cproc gd-image-write-as-png (im::<gd-image> oport::<output-port>)
   (call <void> "graphicsGdImageWriteAsPng"))
-(define-cproc gd-image-write-as-wbmp (im::<gd-image> oport::<output-port>)
+(define-cproc gd-image-write-as-wbmp (im::<gd-image> fg::<fixnum> oport::<output-port>)
   (call <void> "graphicsGdImageWriteAsWBMP"))
-(define-cproc gd-image-write-as-jpeg (im::<gd-image> oport::<output-port>)
+(define-cproc gd-image-write-as-jpeg (im::<gd-image> oport::<output-port> quality::<fixnum>)
   (call <void> "graphicsGdImageWriteAsJpeg"))
 
 (define-enum gdDisposalUnknown)
@@ -240,13 +246,13 @@
   (call <fixnum> "graphicsGdImageSaveAsGif"))
 (define-cproc gd-image-save-as-png (im::<gd-image> path::<const-cstring>)
   (call <fixnum> "graphicsGdImageSaveAsPng"))
-(define-cproc gd-image-save-as-wbmp (im::<gd-image> path::<const-cstring>)
+(define-cproc gd-image-save-as-wbmp (im::<gd-image> fg::<fixnum> path::<const-cstring>)
   (call <fixnum> "graphicsGdImageSaveAsWBMP"))
-(define-cproc gd-image-save-as-jpeg (im::<gd-image> path::<const-cstring>)
+(define-cproc gd-image-save-as-jpeg (im::<gd-image> path::<const-cstring> quality::<fixnum>)
   (call <fixnum> "graphicsGdImageSaveAsJpeg"))
 (define-cproc gd-image-save-as-gd (im::<gd-image> path::<const-cstring>)
   (call <fixnum> "graphicsGdImageSaveAsGd"))
-(define-cproc gd-image-save-as-gd2 (im::<gd-image> path::<const-cstring>)
+(define-cproc gd-image-save-as-gd2 (im::<gd-image> path::<const-cstring> chunkSize::<fixnum> fmt::<fixnum>)
   (call <fixnum> "graphicsGdImageSaveAsGd2"))
 
 (define-enum gdArc)
