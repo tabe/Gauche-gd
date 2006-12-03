@@ -188,31 +188,26 @@ graphicsGdImageCreateFromXpm(gdImage **dst, const char *path)
 #undef PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM
 #undef IMPROPER_GRAPHICS_GD_IMAGE_CREATE_FROM
 
+/* for Gauche 0.8.7 */
+#ifndef SCM_TYPE_ERROR
+#define SCM_TYPE_ERROR(arg, expected) Scm_Error("%s expected for %s, but got %S", expected, #arg, arg)
+#endif
+
 #define CALL_WITH_ICTX(port, exp, alt, val, func) do {				\
 	gdIOCtx *ctx;													\
-	SCM_ASSERT(SCM_IPORTP(port));									\
+	if (!SCM_IPORTP(port)) {										\
+	  SCM_TYPE_ERROR(SCM_OBJ(port), "input port");					\
+	  return -1;													\
+	}																\
 	if ( (ctx = graphicsGdGetIOCtxFromPort(port)) == NULL) {		\
 	  graphicsGdRaiseCondition("could not get gdIOCtx: %s", #func);	\
 	  (val) = (alt);												\
-	  return -1;													\
+	  return -2;													\
 	}																\
 	(val) = (exp);													\
 	return 0;														\
   } while (0)
 
-/* #define PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(fmt) int					\ */
-/*   graphicsGdImageCreate ## fmt ## Port(gdImage **dst, ScmPort *port)	\ */
-/*   {																		\ */
-/* 	gdIOCtx *ctx;														\ */
-/* 	SCM_ASSERT(SCM_IPORTP(port));										\ */
-/* 	if ( (ctx = graphicsGdGetIOCtxFromPort(port)) == NULL) {			\ */
-/* 	  graphicsGdRaiseCondition("could not get gdIOCtx: graphicsGdImageCreate%sPort", #fmt);	\ */
-/* 	  *dst = (gdImage *)NULL;											\ */
-/* 	  return -1;														\ */
-/* 	}																	\ */
-/* 	*dst = gdImageCreateFrom ## fmt ## Ctx(ctx);						\ */
-/* 	return 0;															\ */
-/*   } */
 #define PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT(fmt) int					\
   graphicsGdImageCreate ## fmt ## Port(gdImage **dst, ScmPort *port)	\
   {																		\
@@ -260,7 +255,10 @@ graphicsGdImageCreateGd2PartPort(gdImage **dst, ScmPort *port, int srcx, int src
 
 #define CALL_WITH_OCTX(port, exp, func) do {						\
 	gdIOCtx *ctx;													\
-	SCM_ASSERT(SCM_OPORTP(port));									\
+	if (!SCM_OPORTP(port)) {										\
+	  SCM_TYPE_ERROR(SCM_OBJ(port), "output port");					\
+	  return;														\
+	}																\
 	if ( (ctx = graphicsGdGetIOCtxFromPort(port)) == NULL) {		\
 	  graphicsGdRaiseCondition("could not get gdIOCtx: %s", #func);	\
 	  return;														\

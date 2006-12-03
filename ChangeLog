@@ -1,3 +1,48 @@
+2006-12-03  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* Makefile.in (TEST_GENERATED): added some files.
+
+	* test.scm: section "gdIOCtx compatible port" added.
+	Added tests for the WBMP foreground option in section "gdImage".
+	Check the JPEG quality option, the GD2 compress option, and reading a part
+	of a GD2 image in section "read & write".
+
+	* graphics_gd_io.c (graphicsGdIOCtxGetC): fixed the bug returns a ScmChar
+	instead	of a byte.
+
+	* graphics_gd.c (CALL_WITH_OCTX, CALL_WITH_ICTX): report type errors of
+	`port' dynamically.
+
+2006-12-02  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* doc/reference.scm: added entries about gd-image-create-from-xbm
+	and gd-image-create-gd2-part-port.
+	Revised descriptions on read-gd-image, write-as, and save-as for their
+	keywords.
+
+	* graphics/gd.scm: read-gd-image supports the keywords for the GD2 format.
+	Both write-as and save-as support the keywords for the JPEG and WBMP format.
+	added: gd-image-create-from-xbm and gd-image-create-from-gd2-part.
+
+	* graphics_gdlib.stub:
+	revised: gd-image-save-as-wbmp, gd-image-save-as-jpeg and
+	gd-image-save-as-gd2, gd-image-write-as-wbmp, and gd-image-write-as-jpeg.
+	added: gd-image-create-from-gd2-part, gd-image-create-from-xbm,
+	and gd-image-create-gd2-part-port.
+
+	* graphics_gd.c:
+	rewritten: PROPER_GRAPHICS_GD_IMAGE_CREATE_FROM (w/ new CALL_WITH_F5),
+	PROPER_GRAPHICS_GD_IMAGE_CREATE_PORT (w/ new CALL_WITH_ICTX),
+	PROPER_GRAPHICS_GD_IMAGE_WRITE_AS, graphicsGdImageWriteAsJpeg,
+	graphicsGdImageWriteAsWBMP (w/ new CALL_WITH_OCTX),
+	PROPER_GRAPHICS_GD_IMAGE_SAVE_AS, graphicsGdImageSaveAsJpeg,
+	graphicsGdImageSaveAsWBMP, and graphicsGdImageSaveAsGd2 (w/ new
+	CALL_WITH_F4).
+	Now some of them support optional arguments such as `quality', `fg',
+	`compress' and `chunkSize'.
+	added: graphicsGdImageCreateFromGd2Part, graphicsGdImageCreateFromXbm,
+	and graphicsGdImageCreateGd2PartPort.
+
 2006-11-27  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* release 0.1.3.

@@ -147,6 +147,15 @@
 (save-as im0 (if (memq 'png *gd-features*)
 				 "test/im0.png"
 				 "test/im0.gif"))
+(define im-lambda (gd-image-create-from-xbm "test/lambda.xbm"))
+(test* "gd-image-create-from-xbm" #t (begin0
+									   (is-a? im-lambda <gd-image>)
+									   (save-as im-lambda "test/lambda.gif")))
+(save-as im-lambda "test/lambda.wbmp" 'wbmp :foreground 0) ; test the WBMP foreground option
+
+(test-section "gdIOCtx compatible port")
+(test* "type error (input port)" *test-error* (read-gd-image #f))
+(test* "type error (output port)" *test-error* (write-as im0 'gif #f))
 
 (test-section "read & write")
 (current-gd-image-format (if (memq 'png *gd-features*) 'png 'gif))
@@ -160,6 +169,40 @@
 (call-with-output-file (format #f "test/im1.~a" (current-gd-image-format))
   (lambda (oport)
 	(write im2 oport))) ; it also test `write-as'
+(use file.util)
+(when (memq 'jpeg *gd-features*)
+  (test* "the JPEG quality option"
+		 #t
+		 (let ((f0 "test/screen-high.jpg")
+			   (f1 "test/screen-low.jpg"))
+		   (call-with-output-file f0
+			 (cut write-as im 'jpeg <> :quality 95))
+		   (call-with-output-file f1
+			 (cut write-as im 'jpeg <> :quality 0))
+		   (< (file-size f1) (file-size f0))))
+  )
+(let ((f0 "test/screen-compressed0.gd2")
+	  (f1 "test/screen-compressed1.gd2")
+	  (f2 "test/screen-raw.gd2"))
+  (test* "the GD2 compression option"
+		 #t
+		 (begin
+		   (save-as im f0 'gd2) ; default to compress
+		   (save-as im f1 'gd2 :compress #t :chunk-size 15)
+		   (save-as im f2 'gd2 :compress #f)
+		   (apply < (map file-size (list f0 f1 f2)))))
+  (test* "read a GD2 image partly (gd-image-create-from-gd2-part)"
+		 '(20 . 30)
+		 (let ((im (gd-image-create-from-gd2-part f0 77 49 20 30)))
+		   (cons (get-width im)
+				 (get-height im))))
+  (test* "read a GD2 image partly (read-gd-image)"
+		 '(40 . 50)
+		 (let ((im (call-with-input-file f2
+ 					 (cut read-gd-image <> 'gd2 :x 100 :y 120 :w 40 :h 50))))
+		   (cons (get-width im)
+				 (get-height im))))
+  )
 
 (test-section "gdFont")
 (define *font-giant* (gd-font-get-giant))

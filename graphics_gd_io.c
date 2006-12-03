@@ -38,9 +38,10 @@
 static int
 graphicsGdIOCtxGetC(struct gdIOCtx *ctx)
 {
+  int b;
   graphicsGdIOCtx *gCtx;
   gCtx = (graphicsGdIOCtx *)ctx;
-  return Scm_Getc(gCtx->port);
+  return SCM_GETB(b, gCtx->port);
 }
 
 static int

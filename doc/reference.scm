@@ -4,8 +4,8 @@
 (use text.html-lite)
 (use text.tree)
 
-(define *version* "0.1.3")
-(define *last-update* "Mon Nov 27 2006")
+(define *version* "0.1.4")
+(define *last-update* "Sat Dec 02 2006")
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
@@ -95,8 +95,10 @@
 				   (gd-image-create-from-gif path)
 				   (gd-image-create-from-jpeg path)
 				   (gd-image-create-from-wbmp path)
+				   (gd-image-create-from-xbm path)
 				   (gd-image-create-from-gd path)
-				   (gd-image-create-from-gd2 path))
+				   (gd-image-create-from-gd2 path)
+				   (gd-image-create-from-gd2-part path))
 		("Like C's gdImageCreateFrom* family, one of these creates a <gd-image> object from a source file in its particular image format. Unlike its C's equivalents, it treats the string-value single argument as a path of source. The file handle has been closed before successful return. In case of failure #f is returned.")
 		("C の gdImageCreateFrom* 関数と同様に、これらの手続きはそれぞれ特定のイメージフォーマットに応じてファイルから <gd-image> オブジェクトを作成します。ただ C の同等の関数と異なり、引数にソースファイルのパスを文字列で指定します。手続きに成功して戻った場合にはソースファイルのハンドルは閉じられています。失敗した場合には #f を返します。"))
 
@@ -287,9 +289,9 @@
 
 		((constant *gd-features*)
 		 ("A list of symbols which mean available features of GD."
-		  "Possible symbols: fontconfig freetype gif jpeg png xpm.")
+		  "Possible symbols in the list: fontconfig freetype gif jpeg png xpm.")
 		 ("有効な GD の機能を表すシンボルのリスト。"
-		  "含まれる可能性のあるシンボルは以下の通り: fontconfig freetype gif jpeg png xpm。"))
+		  "このリストに含まれる可能性のあるシンボルは以下の通り: fontconfig freetype gif jpeg png xpm。"))
 
 		((parameter current-gd-image-format)
 		 ("It is expected to keep a symbol which decides the image format taken with \"read-gd-image\" and/or \"write\" unless specified.")
@@ -299,24 +301,35 @@
 		 ("Call `thunk' with the parameterized \"current-gd-image-format\" of value `fmt'.")
 		 ("上記の \"current-gd-image-format\" の値を一時的に `fmt' にして `thunk' を呼びます。戻ると \"current-gd-image-format\" の値は復元されます。`thunk' の戻り値がこの手続きの戻り値です。"))
 
-		((method (read-gd-image (port <port>) &optional (fmt <symbol>)))
-		 ("Read a image with or without format `fmt' (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", and \"gd2\"). See also \"current-gd-image-format\".")
-		 ("ポート `port' からイメージを入力します。フォーマット `fmt' として取り得る値は \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", 及び \"gd2\" です。\"current-gd-image-format\" も参照してください。"))
+		((method (read-gd-image (port <port>) &optional (fmt <symbol>) &keyword x y w h))
+		 ("Read a image with or without format `fmt' (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", and \"gd2\"). See also \"current-gd-image-format\"."
+		  "The keywords `x', `y', `w' and `h' are only for the GD2 format and corresponding to the 2nd, 3rd, 4th and 5th argument of \"gdImageCreateFromGd2PartCtx\" respectively.")
+		 ("ポート `port' からイメージを入力します。フォーマット `fmt' として取り得る値は \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", 及び \"gd2\" です。\"current-gd-image-format\" も参照してください。"
+		  "キーワード `x'、`y'、`w' 及び `h' は GD2 フォーマットに対してのみ適用され、それぞれ \"gdImageCreateFromGd2PartCtx\" の 2番目、3番目、4番目及び5番目の引数に対応します。"))
 
-		((method (write-as (im <gd-image>) (fmt <symbol>) port))
-		 ("Put a image `im' with format `fmt' (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", and \"wbmp\").")
-		 ("ポートへイメージ `im' を出力します。フォーマット `fmt' に取り得る値は \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", 及び \"wbmp\" です。"))
+		((method (write-as (im <gd-image>) (fmt <symbol>) port &keyword quality foreground))
+		 ("Put a image `im' with format `fmt' (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", and \"wbmp\")."
+		  "If the JPEG format specified, you can suggest the `quality' of the resulting image. The keyword is just ignored otherwise."
+		  "If the WBMP format specified, you can set the color index of pixels which are considered as `foreground'. The keyword is just ignored otherwise.")
+		 ("ポートへイメージ `im' を出力します。フォーマット `fmt' に取り得る値は \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", 及び \"wbmp\" です。"
+		  "JPEG フォーマットが指定された場合には、キーワード `quality' に与えられる値によって出力の質(と、結果的にサイズ)を調節できます。このキーワードが与えられない場合には GD によってデフォルトの値が利用されます。それ以外のフォーマットについては、単に無視されます。"
+		  "WBMP フォーマットが指定された場合には、キーワード `foreground' によってビットがセットされるカラーインデックスを与えることができます。このインデックスを持たないピクセルは\"背景\"として扱われます。このキーワードが与えられない場合には GD はデフォルトの振る舞いをします。"))
 
 		((method (display (im <gd-image>) &optional port)
 				 (write (im <gd-image>) &optional port))
 		 ("They are the same abbreviations of \"write-as\". See also \"current-gd-image-format\".")
 		 ("\"write-as\" の省略形で、いずれも同じように振舞います。\"current-gd-image-format\" も参照してください。"))
 
-		((method (save-as (im <gd-image>) (path <string>) &optional (fmt <symbol>)))
-		 ("It provides another way to output a image. It tries to create a file of path `path' even if exists and return 0 in case of success. Unless the optional `fmt' is given it choices the output image format by the extension (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", and \"gd2\") of the path."
-		  "Available formats (if supported): gif, jpeg, png, wbmp, gd, and gd2.")
-		 ("イメージを出力するメソッドの1つです。`path' として与えられたファイルを(既存であっても)新しく作成します。成功した場合は0を返します。オプショナルな引数 `fmt' で明示的にイメージフォーマットを指定しなければ `path' の拡張子によって選択されます。判別される拡張子は \"gif\", \"jpg\", \"jpeg\", \"jpe\", \"png\", \"wbmp\", \"gd\", \"gd2\" です。"
-		  "(サポートしていれば)利用できるフォーマットは gif, jpeg, png, wbmp, gd, gd2 です。"))
+		((method (save-as (im <gd-image>) (path <string>))
+				 (save-as (im <gd-image>) (path <string>) (fmt <symbol>) &keyword quality foreground chunk-size compress))
+		 ("It provides another way to output a image. It tries to create a file of path `path' even if exists and return 0 in case of success. In the former case it choices the output image format by the extension (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", and \"gd2\") of the path. Explicit `fmt' is used in the latter."
+		  "Available formats (if supported): GIF, JPEG, PNG, WBMP, GD, AND GD2."
+		  "If the GD2 format specified, you can set the options of the resulting image by the keywords `chunk-size' and `compress'. If a true value following `compress' (default), then the image will be compressed with the given `chunk-size' (or, a default one without `chunk-size').  Otherwise it will be uncompressed."
+		  "See \"write-as\" on the keyword `quality' for JPEG and `foreground' for WBMP.")
+		 ("イメージを出力するメソッドの1つです。`path' として与えられたファイルを(既存であっても)新しく作成します。成功した場合は0を返します。前者の形で呼ばれた場合、出力イメージフォーマットは `path' の拡張子によって選択されます。判別される拡張子は \"gif\", \"jpg\", \"jpeg\", \"jpe\", \"png\", \"wbmp\", \"gd\", \"gd2\" です。後者の形で明示的にフォーマット `fmt' を与えられます。"
+		  "(サポートしていれば)利用できるフォーマットは GIF, JPEG, PNG, WBMP, GD, GD2 です。"
+		  "GD2 フォーマットが指定された場合、キーワード `chunk-size' 及び `compress' によってオプションを指定できます。`compress' に対して真の値が与えられたとき(デフォルト)には、書き出されるイメージは `chunk-size' の値を使って圧縮されます。`chunk-size' が与えられない場合、GD はデフォルトのサイズを選択します。`compress' が偽なら圧縮されません。"
+		  "JPEG フォーマットのためのキーワード `quality' や WBMP フォーマットのためのキーワード `foreground' については、\"write-as\" を参照してください。"))
 
 		((method (char! (im <gd-image>) (f <gd-font>) (x <integer>) (y <integer>) (c <integer>) (color <integer>) &keyword direction))
 		 ("Put a character on the given `im'. If symbol 'up follows keyword `direction', \"gd-image-char-up\" is called instead of \"gd-image-char\".")
