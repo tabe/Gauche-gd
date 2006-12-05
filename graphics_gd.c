@@ -487,6 +487,30 @@ IMPROPER_GRAPHICS_GD_FONT_GET(Tiny)
 #undef PROPER_GRAPHICS_GD_FONT_GET
 #undef IMPROPER_GRAPHICS_GD_FONT_GET
 
+#define WITH_UCHARP_FROM_CONST_CHARP(dst, src, exp, func) do {			\
+	size_t len = strlen(src);											\
+	unsigned char *dst = calloc(len + 1, sizeof(unsigned char)); /* with the terminating `\0' */ \
+	if (dst == NULL) {													\
+	  graphicsGdRaiseCondition("calloc failed: %s", #func);				\
+	  return;															\
+	}																	\
+	strncpy(dst, src, len + 1);											\
+	(exp);																\
+	free(dst);															\
+  } while (0)
+
+void
+graphicsGdImageString(gdImagePtr im, gdFontPtr f, int x, int y, const char *s, int color)
+{
+  WITH_UCHARP_FROM_CONST_CHARP(dst, s, gdImageString(im, f, x, y, dst, color), graphicsGdImageString);
+}
+
+void
+graphicsGdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, const char *s, int color)
+{
+  WITH_UCHARP_FROM_CONST_CHARP(dst, s, gdImageStringUp(im, f, x, y, dst, color), graphicsGdImageStringUp);
+}
+
 int
 graphicsGdImageStringFT(gdImage *im,
 						ScmPair **brect0, ScmPair **brect1, ScmPair **brect2, ScmPair **brect3,

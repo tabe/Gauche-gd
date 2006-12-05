@@ -1,3 +1,13 @@
+2006-12-05  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* graphics_gdlib.stub (gd-image-string, gd-image-string-up): calls
+	graphicsGdImageString or graphicsGdImageStringUp respectively.
+
+	* graphics_gd.c: added graphicsGdImageString and graphicsGdImageStringUp.
+
+	* graphics_gd.h: added declarations of graphicsGdGetFeatures and
+	graphicsGdGetVersion to suppress compile-time wargings.
+
 2006-12-03  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* Makefile.in (TEST_GENERATED): added some files.

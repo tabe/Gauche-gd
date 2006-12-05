@@ -73,6 +73,9 @@ extern ScmClass *GraphicsGdFontClass;
 #define GRAPHICS_GD_FONT_UNBOX(obj) SCM_FOREIGN_POINTER_REF(gdFont *, obj)
 #define GRAPHICS_GD_FONT_BOX(ctx)   Scm_MakeForeignPointer(GraphicsGdFontClass, ctx)
 
+ScmObj graphicsGdGetFeatures(void);
+const char *graphicsGdGetVersion(void);
+
 SCM_DECL_END
 
 #endif  /* GAUCHE_GRAPHICS_GD_H */
