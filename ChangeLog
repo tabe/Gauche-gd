@@ -1,3 +1,25 @@
+2006-12-10  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* test.scm: added the following case to section "gd-image-string-ft".
+
+	* doc/reference.scm (gd-image-string-ft): said that it is
+	possible to set `im' #f.
+
+	* graphics_gdlib.stub (gd-image-string-ft): the first argument
+	now can be #f which allow NULL pass to graphicsGdImageStringFT.
+
+	* graphics_gd.c: CHECK_LIST_AND_LENGTH replaced SCM_ASSERT in
+	DEFINE_GRAPHICS_GD_IMAGE_POLYGON and graphicsGdImageSetStyle.
+
+2006-12-09  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* doc/reference.scm: mentioned the 'maybe' return values cause #f which
+	the following functions.
+
+	* graphics_gdlib.stub: the 'maybe' types handle the return values of
+	gd-image-create-*, gd-image-create-palette, gd-image-square-to-circle
+	and gd-font-get-*.
+
 2006-12-05  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* graphics_gdlib.stub (gd-image-string, gd-image-string-up): calls

@@ -172,7 +172,7 @@ graphicsGdImageCreateFromXpm(gdImage **dst, const char *path)
   size_t len = strlen(path);
   char *temp = calloc(len + 1, sizeof(char)); /* with terminating `\0' */
   if (temp == NULL) {
-	graphicsGdRaiseCondition("calloc failed: %s", "graphicsGdImageCreateFromXpm()");
+	graphicsGdRaiseCondition("calloc failed: %s", "graphicsGdImageCreateFromXpm");
 	return -1;
   }
   strncpy(temp, path, len + 1);
@@ -381,22 +381,37 @@ graphicsGdImageGifAnimEndPort(ScmPort *oport)
   SCM_PUTC(';', oport);
 }
 
+#define CHECK_LIST_AND_LENGTH(list, length) do {						\
+	if (!SCM_LISTP(list) || !SCM_PROPER_LIST_P(list)) {					\
+	  SCM_TYPE_ERROR(list, "proper list");								\
+	  return;															\
+	}																	\
+	if (length < 0) {													\
+	  Scm_Error("non negative integer required, but got %d", length);	\
+	  return;															\
+	}																	\
+  } while (0)
+
 #define DEFINE_GRAPHICS_GD_IMAGE_POLYGON(name) void						\
   graphicsGdImage ## name(gdImage *im, ScmObj points, int pointsTotal, int color) \
   {																		\
 	ScmObj head, pair;													\
 	gdPoint *p, *q;														\
 	int i = 0;															\
-	SCM_ASSERT(SCM_LISTP(points) && SCM_PROPER_LIST_P(points) && pointsTotal >= 0);	\
+	CHECK_LIST_AND_LENGTH(points, pointsTotal);							\
 	p = q = calloc(pointsTotal, sizeof(gdPoint));						\
 	if (p == NULL) {													\
-	  graphicsGdRaiseCondition("calloc failed: %s", "graphicsGdImage" #name "()"); \
+	  graphicsGdRaiseCondition("calloc failed: %s", "graphicsGdImage" #name); \
 	  return;															\
 	}																	\
 	SCM_FOR_EACH (head, points) {										\
 	  if (i++ == pointsTotal) break;									\
 	  pair = SCM_CAR(head);												\
-	  SCM_ASSERT(SCM_PAIRP(pair));										\
+	  if (!SCM_PAIRP(pair)) {											\
+		SCM_TYPE_ERROR(pair, "pair");									\
+		free(p);														\
+		return;															\
+	  }																	\
 	  q->x = SCM_INT_VALUE(SCM_CAR(pair));								\
 	  q->y = SCM_INT_VALUE(SCM_CDR(pair));								\
 	  q++;																\
@@ -425,10 +440,10 @@ graphicsGdImageSetStyle(gdImage *im, ScmObj style, int styleLength)
 {
   ScmObj head;
   int *p, *q, i = 0;
-  SCM_ASSERT(SCM_LISTP(style) && SCM_PROPER_LIST_P(style) && styleLength >= 0);
+  CHECK_LIST_AND_LENGTH(style, styleLength);
   p = q = calloc(styleLength, sizeof(int));
   if (p == NULL) {
-	graphicsGdRaiseCondition("calloc failed: %s", "graphicsGdImageSetStyle()");
+	graphicsGdRaiseCondition("calloc failed: %s", "graphicsGdImageSetStyle");
 	return;
   }
   SCM_FOR_EACH (head, style) {

@@ -88,8 +88,8 @@
 	   ((procedure (gd-image-create sx sy)
 				   (gd-image-create-palette sx sy)
 				   (gd-image-create-true-color sx sy))
-		("Each of these is a constructor of <gd-image> which is equivalent to gdImageCreate, gdImageCreatePalette, or gdImageCreateTrueColor respectively.")
-		("それぞれ gdImageCreate, gdImageCreatePalette, gdImageCreateTrueColor に対応し、<gd-image> オブジェクトを返します。"))
+		("Each of these is a constructor of <gd-image> which is equivalent to gdImageCreate, gdImageCreatePalette, or gdImageCreateTrueColor respectively. If failed these return #f.")
+		("それぞれ gdImageCreate, gdImageCreatePalette, gdImageCreateTrueColor に対応し、<gd-image> オブジェクトを返します。失敗した場合は #f を返します。"))
 
 	   ((procedure (gd-image-create-from-png path)
 				   (gd-image-create-from-gif path)
@@ -148,8 +148,10 @@
 
 	   ((procedure (gd-image-string-ft im fg fontlist ptsize angle x y str))
 		("Print a string with a FreeType font specified by the path `fontlist'. Unlike the original version, it return *four* pairs of integers which represent the coordinates of the points surrounding the bounding rectangle, and coming lower-left, lower-right, upper-right, and upper-left in that order. "
+		 "It is also possible to obtain these values efficiently, i.e. without printing `str', by giving #f to `im'."
 		 "If your gosh is configured with option \"--enable-multibyte=utf-8\", then congratulations! and multibyte characters will be available in `str' (with an appropriate font, of course). Otherwise you had better use method \"string!\".")
 		("`fontlist' でパスを指定することで FreeType フォントを用いて文字列を書き出します。オリジナルの C の関数と異なり、この手続きは*4つ*のペアを返し、それぞれが出力先の矩形を囲む座標(順に左下、右下、右上、左上)を表します。"
+		 "`im' に #f を渡すことで描画せずにこの矩形の座標を効率的に求めることができます。"
 		 "gosh が \"--enable-multibyte=utf-8\" というオプション付きでビルドされていれば `str' でマルチバイト文字が利用できます。そうでない場合はメソッド \"string!\" の使用を考えてください。"))
 
 	   ((procedure (gd-image-polygon im points pointsTotal color)
@@ -184,8 +186,8 @@
 
 	   ((procedure (gd-image-create-palette-from-true-color im ditherFlag colorsWanted)
 				   (gd-image-true-color-to-palette im ditherFlag colorsWanted))
-		("Both convert a true color image into the palette one though the latter destructively returns into the result argument `im'.")
-		("いずれも true color イメージをパレットイメージに変換します。ただし後者は与えられたイメージを破壊的に変更しその引数に結果を返します。"))
+		("Both convert a true color image into the palette one while the latter destructively returns into the result argument `im'. If the former fails it returns #f")
+		("いずれも true color イメージをパレットイメージに変換します。ただし後者は与えられたイメージを破壊的に変更しその引数に結果を返します。また前者が失敗した場合 #f が返ります。"))
 
 	   ((procedure (gd-image-color-transparent im color))
 		("The gdImageColorTransparent equivalent.")
@@ -269,16 +271,16 @@
 
 	   ((procedure (gd-image-square-to-circle im radius)
 				   (gd-image-sharpen im pct))
-		("Like gdImageSquareToCircle or gdImageSharpen respectively.")
-		("それぞれ gdImageSquareToCircle, gdImageSharpen に対応します。"))
+		("Like gdImageSquareToCircle or gdImageSharpen respectively. The former returns #f in case of failure.")
+		("それぞれ gdImageSquareToCircle, gdImageSharpen に対応します。前者は失敗した場合 #f を返します。"))
 
 	   ((procedure (gd-font-get-giant)
 				   (gd-font-get-large)
 				   (gd-font-get-medium-bold)
 				   (gd-font-get-small)
 				   (gd-font-get-tiny))
-		("One of these procedures give you the font of size Giant, Large, MediumBold, Small, or Tiny respectively, which is for gd-image-char, gd-image-string etc.")
-		("これらの手続きはそれぞれサイズが Giant, Large, MediumBold, Small, Tiny のフォントを返します。このフォントは gd-image-char や gd-image-string 等の引数に利用されます。"))
+		("One of these procedures give you the font of size Giant, Large, MediumBold, Small, or Tiny respectively, which is for gd-image-char, gd-image-string etc. When the specified size is unavailable it return #f.")
+		("これらの手続きはそれぞれサイズが Giant, Large, MediumBold, Small, Tiny のフォントを返します。このフォントは gd-image-char や gd-image-string 等の引数に利用されます。フォントが得られない場合は #f を返します。"))
 	   ))
 
 (define-macro (simple-api lang)
@@ -302,9 +304,9 @@
 		 ("上記の \"current-gd-image-format\" の値を一時的に `fmt' にして `thunk' を呼びます。戻ると \"current-gd-image-format\" の値は復元されます。`thunk' の戻り値がこの手続きの戻り値です。"))
 
 		((method (read-gd-image (port <port>) &optional (fmt <symbol>) &keyword x y w h))
-		 ("Read a image with or without format `fmt' (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", and \"gd2\"). See also \"current-gd-image-format\"."
+		 ("Read a image with or without format `fmt' (such as \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", and \"gd2\"). See also \"current-gd-image-format\", or #f if an error occurs."
 		  "The keywords `x', `y', `w' and `h' are only for the GD2 format and corresponding to the 2nd, 3rd, 4th and 5th argument of \"gdImageCreateFromGd2PartCtx\" respectively.")
-		 ("ポート `port' からイメージを入力します。フォーマット `fmt' として取り得る値は \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", 及び \"gd2\" です。\"current-gd-image-format\" も参照してください。"
+		 ("ポート `port' からイメージを入力します。エラーの場合は #f を返します。フォーマット `fmt' として取り得る値は \"gif\", \"jpe\", \"jpeg\", \"jpg\", \"png\", \"wbmp\", \"gd\", 及び \"gd2\" です。\"current-gd-image-format\" も参照してください。"
 		  "キーワード `x'、`y'、`w' 及び `h' は GD2 フォーマットに対してのみ適用され、それぞれ \"gdImageCreateFromGd2PartCtx\" の 2番目、3番目、4番目及び5番目の引数に対応します。"))
 
 		((method (write-as (im <gd-image>) (fmt <symbol>) port &keyword quality foreground))
@@ -403,7 +405,7 @@
 	  (if (eq? 'en lang)
 		  (simple-api en)
 		  (simple-api ja))
-	  (html:address "(c) 2006 Takeshi Abe")
+	  (html:address "&copy; 2006 Takeshi Abe")
 	  ))))
 
 (define (main args)
