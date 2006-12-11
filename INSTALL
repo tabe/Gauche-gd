@@ -14,6 +14,7 @@ Command lines
 
 $ ./configure
 $ make
+$ make check    # optional
 # make install
 
 
@@ -31,3 +32,20 @@ If you do not have the gd2 library, then:
 * Cygwin
 I have succeeded in installing it with Cygwin DLL 1.5.21-1 (Windows XP).
 Good luck! :-)
+
+
+Tips
+====
+
+* Failure on test
+You may fail to "make check" like:
+
+Testing graphics.gd ...                                          gd-jpeg: JPEG library reports unrecoverable error: Empty input file
+failed.
+discrepancies found.  Errors are:
+test gd-image-string-ft(upper-right) with #f: expects (273 . 58) => got (273 . 59)
+test gd-image-string-ft(upper-left) with #f: expects (29 . 58) => got (29 . 59)
+test gd-image-string-ft(upper-right): expects (273 . 58) => got (273 . 59)
+test gd-image-string-ft(upper-left): expects (29 . 58) => got (29 . 59)
+
+which is no problem, since something wrong were only some values of the cooridinates.

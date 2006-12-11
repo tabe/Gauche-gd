@@ -11,7 +11,7 @@
  (FreeType "http://www.freetype.org/")
  )
 
-(define *last-update* "Mon Nov 27 2006")
+(define *last-update* "Mon Dec 11 2006")
 (define *gauche-gd-version* (file->string "../VERSION"))
 (define *gauche-gd-tarball-basename* (string-append "Gauche-gd-" *gauche-gd-version* ".tgz"))
 (define *gauche-gd-tarball-size* (file-size (string-append "../../" *gauche-gd-tarball-basename*)))
@@ -32,6 +32,8 @@
 
 	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "News" "最新情報"))
 	 (html:ul
+	  (html:li "[2006-12-11] " (en/ja "Release 0.1.4. Some bugs fixed and some options added."
+									  "バージョン 0.1.4 を公開しました。いくつかのバグを修正し、オプションを追加しました。"))
 	  (html:li "[2006-11-27] " (en/ja "Release 0.1.3. API for GIF Animations available."
 									  "バージョン 0.1.3 を公開しました。GIF アニメーションをサポートしました。"))
 	  (html:li "[2006-11-16] " (en/ja "It is confirmed that the current version 0.1.2 runs on Gauche 0.8.8."

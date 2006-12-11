@@ -1,3 +1,7 @@
+2006-12-11  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* release 0.1.4.
+
 2006-12-10  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* test.scm: added the following case to section "gd-image-string-ft".
