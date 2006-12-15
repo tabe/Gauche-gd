@@ -81,6 +81,7 @@ graphicsGdRaiseCondition(const char *msg, const char *arg)
 }
 
 #define F_OPEN_AND_LOCK(f, fl, fd, path, flag, type) do {			\
+	int r;															\
 	if ( (f = fopen(path, flag)) == NULL) {							\
 	  graphicsGdRaiseCondition("could not open file: %s", path);	\
 	  return -1;													\
@@ -89,7 +90,8 @@ graphicsGdRaiseCondition(const char *msg, const char *arg)
 	fl.l_whence = SEEK_SET;											\
 	fl.l_start = fl.l_len = 0;										\
 	fd = fileno(f);													\
-	if (fcntl(fd, F_SETLKW, &fl) != 0) {							\
+	SCM_SYSCALL(r, fcntl(fd, F_SETLKW, &fl));						\
+	if (r == -1) {													\
 	  graphicsGdRaiseCondition("could not lock file: %s", path);	\
 	  return -2;													\
 	}																\
