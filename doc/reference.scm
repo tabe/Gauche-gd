@@ -5,7 +5,7 @@
 (use text.tree)
 
 (define *version* "0.1.4")
-(define *last-update* "Sat Dec 02 2006")
+(define *last-update* "Wed Jan 03 2007")
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
@@ -405,7 +405,7 @@
 	  (if (eq? 'en lang)
 		  (simple-api en)
 		  (simple-api ja))
-	  (html:address "&copy; 2006 Takeshi Abe")
+	  (html:address "&copy; 2006,2007 Takeshi Abe")
 	  ))))
 
 (define (main args)
