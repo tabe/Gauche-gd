@@ -11,7 +11,7 @@
  (FreeType "http://www.freetype.org/")
  )
 
-(define *last-update* "Mon Dec 11 2006")
+(define *last-update* "Thu Jan 18 2007")
 (define *gauche-gd-version* (file->string "../VERSION"))
 (define *gauche-gd-tarball-basename* (string-append "Gauche-gd-" *gauche-gd-version* ".tgz"))
 (define *gauche-gd-tarball-size* (file-size (string-append "../../" *gauche-gd-tarball-basename*)))
@@ -25,6 +25,9 @@
 	 (html:p :id "lang_navi" (html:a :href (en/ja "index.html" "index.en.html")
 										"[" (en/ja "Japanese" "English") "]"))
 	 (html:p :id "last_update" "Last update: " *last-update*)
+	 (fixedpoint:separator)
+	 (fixedpoint:adsense)
+	 (fixedpoint:separator)
 	 (html:p (html:dfn /Gauche-gd/)
 			 (en/ja
 				 (list " is an extension package of " /Gauche/ " which provides a binding of Thomas Boutell's " /GD/ "2 library.")
@@ -32,6 +35,8 @@
 
 	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "News" "最新情報"))
 	 (html:ul
+	  (html:li "[2007-01-18] " (en/ja "It is confirmed that the current version 0.1.4 runs on Gauche 0.8.9."
+									  "Gauche 0.8.9 で現在のバージョン 0.1.4 が動作することを確認しました。"))
 	  (html:li "[2006-12-11] " (en/ja "Release 0.1.4. Some bugs fixed and some options added."
 									  "バージョン 0.1.4 を公開しました。いくつかのバグを修正し、オプションを追加しました。"))
 	  (html:li "[2006-11-27] " (en/ja "Release 0.1.3. API for GIF Animations available."
