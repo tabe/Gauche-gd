@@ -8,6 +8,7 @@
 (//
  (GD.pm "http://search.cpan.org/dist/GD/")
  (GD/Scheme "http://www196.pair.com/lisovsky/scheme/gd/index.html")
+ (CL-GD "http://weitz.de/cl-gd/")
  (FreeType "http://www.freetype.org/")
  )
 
@@ -89,6 +90,7 @@
 	  (html:li (html:a :href "http://newcenturycomputers.net/projects/gdmodule.html" "gdmodule - Python GD module"))
 	  (html:li (html:a :href "http://raa.ruby-lang.org/project/ruby-gd/" "ruby-gd"))
 	  (html:li /GD/Scheme/)
+      (html:li /CL-GD/)
 	  (en/ja '()
 			 (html:li (html:a :href "http://practical-scheme.net/wiliki/wiliki.cgi?Gauche%3a%e6%8b%a1%e5%bc%b5%e3%83%a9%e3%82%a4%e3%83%96%e3%83%a9%e3%83%aa%e5%85%a5%e9%96%80" "Gauche:拡張ライブラリ入門")))
 	  )
