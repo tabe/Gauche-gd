@@ -1,4 +1,5 @@
 #!/usr/bin/env gosh
+;; -*- encoding: euc-jp -*-
 
 (use file.util)
 (use fixedpoint.site)
