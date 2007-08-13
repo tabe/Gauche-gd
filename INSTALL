@@ -21,11 +21,11 @@ $ make check    # optional
 Distribution Specific
 =====================
 
-* Debian (sarge)
+* Debian (etch)
 If you do not have the gd2 library, then:
-# apt-get install libgd2-dev
+# aptitude install libgd2-dev
 
-* Fedora Core 5
+* Fedora Core 6
 If you do not have the gd2 library, then:
 # yum install gd-devel
 
