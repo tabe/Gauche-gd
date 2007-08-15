@@ -4,8 +4,8 @@
 (use text.html-lite)
 (use text.tree)
 
-(define *version* "0.1.4")
-(define *last-update* "Mon Jan 22 2007")
+(define *version* "0.1.5")
+(define *last-update* "Web Aug 15 2007")
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
@@ -369,6 +369,13 @@
 		((procedure (gif-anim-with im oport thunk &keyword global-cm loop))
 		 ("Call `thunk' with gif-anim-began `im' and `port'. Before returning the procedure successfully, gif-anim-end is called expectedly.")
 		 ("この手続きは、まず `im' と `port' とキーワードに与えられた値を引数にして gif-anim-begin を呼び、その上で `thunk' を呼びます。無事に手続きから戻る前に gif-anim-end を呼びます。"))
+
+        ((method (pixel-for-each (im <gd-image>) proc)
+                 (pixel-fold (im <gd-image>) proc knil))
+         ("pixel-for-each calls 'proc' once for each pixel of image 'im' with arguments: x-coordinate, y-coordinate, and its pixel value obtained by 'gd-image-get-pixel'. Its return value is unspecified."
+          "pixel-fold calls 'proc' once for each pixel of image 'im' with 4 argumens: x-coordinate, y-coordinate, its pixel value, and the temporary seed, and returns the resulting reduction.")
+         ("メソッド pixel-for-each は各ピクセルごとに x 座標、y 座標、および gd-image-get-pixel の値の3つの引数で 'proc' を呼びます。戻り値は不定です。"
+          "メソッド pixel-fold は初期値 knil をもとに、各ピクセルごとに x、y、ピクセル値、およびその時点での畳み込みされた値の4つの引数で 'proc' を呼びます。戻り値は畳み込まれた値です。"))
 		))
 
 (define (document-tree lang)

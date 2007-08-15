@@ -324,6 +324,38 @@
 (test-section "GD Version")
 (format #t "*gd-version*: ~s\n" *gd-version*)
 
+(test-section "Miscellaneous")
+
+(define im (gd-image-create-from-gif "test/screen.gif"))
+
+(define sum
+  (fold
+   (lambda (x s)
+     (fold
+      (lambda (y t)
+        (+ (gd-image-get-pixel im x y) t))
+      s
+      (iota (gd-image-sy im))))
+   0
+   (iota (gd-image-sx im))))
+
+(test* "pixel-for-each"
+       sum
+       (let ((s 0))
+         (pixel-for-each
+          (lambda (x y pixel)
+            (set! s (+ pixel s)))
+          im)
+         s))
+
+(test* "pixel-fold"
+       sum
+       (pixel-fold
+        (lambda (x y pixel seed)
+          (+ pixel seed))
+        0
+        im))
+
 (test-end)
 
 ;; Local variables:

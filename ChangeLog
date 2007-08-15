@@ -1,3 +1,9 @@
+2007-08-15  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* graphics/gd.scm (pixel-for-each, pixel-fold): added.
+
+	* test.scm ("Miscellaneous"): added.
+
 2006-12-14  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* graphics_gd.c (F_OPEN_AND_LOCK): wrapped fcntl in SCM_SYSCALL.

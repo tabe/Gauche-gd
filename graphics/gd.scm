@@ -35,6 +35,7 @@
 (define-module graphics.gd
   (use gauche.charconv)
   (use gauche.parameter)
+  (use srfi-42)
   (export <gd-image>
 		  <gd-font>
 		  ;;; C Layer API
@@ -115,6 +116,7 @@
 		  object-equal?
 		  *gd-features*
 		  *gd-version*
+          pixel-fold pixel-for-each
 		  ))
 (select-module graphics.gd)
 
@@ -409,5 +411,17 @@
 
 (define-constant *gd-features* (gd-get-features))
 (define-constant *gd-version*  (gd-get-version))
+
+(define-method pixel-for-each ((im <gd-image>) proc)
+  (do-ec (: x (gd-image-sx im)) (: y (gd-image-sy im))
+         (proc x y (gd-image-get-pixel im x y))))
+
+(define-method pixel-fold ((im <gd-image>) proc knil)
+  (fold-ec knil
+           (: x (gd-image-sx im)) (: y (gd-image-sy im))
+           (list x y (gd-image-get-pixel im x y))
+           (lambda (temp seed)
+             (set-cdr! (last-pair temp) (list seed))
+             (apply proc temp))))
 
 (provide "graphics/gd")
