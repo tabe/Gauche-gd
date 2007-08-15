@@ -29,6 +29,11 @@ If you do not have the gd2 library, then:
 If you do not have the gd2 library, then:
 # yum install gd-devel
 
+* FreeBSD 6.2
+# cd /usr/ports/graphics/gd
+# make install clean
+Also available: /usr/ports/japanese/gd.
+
 * Cygwin
 I have succeeded in installing it with Cygwin DLL 1.5.21-1 (Windows XP).
 Good luck! :-)
