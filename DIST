@@ -9,6 +9,7 @@
 
 MODULE=Gauche-gd
 MAKE=gmake
+CONFIGURE="./configure CPPFLAGS=-I/usr/local/include"
 
 while [ $# -gt 0 ]; do
   case $1 in
@@ -27,7 +28,7 @@ fi
 if [ "$tgz" = "yes" ]; then
   if [ -f Makefile ]; then $MAKE maintainer-clean; fi
   ./DIST gen
-  ./configure
+  $CONFIGURE
   $MAKE distclean
 
   if [ ! -f VERSION ]; then echo "No VERSION; something wrong?"; exit 1; fi
@@ -38,6 +39,7 @@ if [ "$tgz" = "yes" ]; then
   echo DIST_EXCLUDE_X >> DIST_EXCLUDE_X
   if [ -f DIST_EXCLUDE ]; then cat DIST_EXCLUDE >> DIST_EXCLUDE_X; fi
   find . -name CVS -print -prune >> DIST_EXCLUDE_X
+  find . -name .svn -print -prune >> DIST_EXCLUDE_X
 
   rm -rf ../$MODULE-$VERSION
 
@@ -52,7 +54,7 @@ if [ "$sim" = "yes" ]; then
   if [ "$?" != "0" ]; then exit 1; fi
   VERSION=`cat VERSION`
   (cd ..; zcat $MODULE-$VERSION.tgz | tar xf -)
-  (cd ../$MODULE-$VERSION; ./configure)
+  (cd ../$MODULE-$VERSION; $CONFIGURE)
   $MAKE -C ../$MODULE-$VERSION all check doc example
 fi
 
