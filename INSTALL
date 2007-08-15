@@ -33,6 +33,8 @@ If you do not have the gd2 library, then:
 # cd /usr/ports/graphics/gd
 # make install clean
 Also available: /usr/ports/japanese/gd.
+You will need to ./configure CPPFLAGS=-l/usr/local/include for gd.h,
+and gmake instead of make.
 
 * Cygwin
 I have succeeded in installing it with Cygwin DLL 1.5.21-1 (Windows XP).
