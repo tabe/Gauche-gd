@@ -5,7 +5,7 @@ dnl $Id$
 dnl
 
 AC_PREREQ(2.54)
-AC_INIT(Gauche-gd, 0.1.4, tabe@fixedpoint.jp)
+AC_INIT(Gauche-gd, 0.2.0, tabe@fixedpoint.jp)
 dnl If you want to use the system name (OS, architecture, etc) in the
 dnl configure, uncomment the following line.  In such a case, you need
 dnl to copy config.guess and config.sub from automake distribution.

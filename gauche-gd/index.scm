@@ -13,7 +13,7 @@
  (FreeType "http://www.freetype.org/")
  )
 
-(define *last-update* "Thu Feb 07 2007")
+(define *last-update* "Wed Aug 15 2007")
 (define *gauche-gd-version* (file->string "../VERSION"))
 (define *gauche-gd-tarball-basename* (string-append "Gauche-gd-" *gauche-gd-version* ".tgz"))
 (define *gauche-gd-tarball-size* (file-size (string-append "../../" *gauche-gd-tarball-basename*)))
@@ -37,6 +37,10 @@
 
 	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "News" "最新情報"))
 	 (html:ul
+      (html:li "[2007-08-15] " (en/ja "Release 0.2.0. Methods pixel-for-each and pixel-fold added."
+                                      "バージョン 0.2.0 を公開しました。メソッド pixel-for-each および pixel-fold を追加しました。"))
+	  (html:li "[2007-06-21] " (en/ja "Congratulation! GD 2.0.35 released."
+									  "GD 2.0.35 がリリースされました。"))
 	  (html:li "[2007-02-07] " (en/ja "Congratulation! GD 2.0.34 released."
 									  "GD 2.0.34 がリリースされました。"))
 	  (html:li "[2007-01-18] " (en/ja "It is confirmed that the current version 0.1.4 runs on Gauche 0.8.9."
@@ -83,7 +87,7 @@
 	  (html:li (html:a :href (en/ja "reference.en.html" "reference.ja.html")
 					   "Gauche-gd " (en/ja "Reference Manual" "リファレンスマニュアル"))))
 
-	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "Links" "リンク"))
+	 (html:h2 :style "border-bottom: 1px solid #bbbbbb;" "FYI")
 	 (html:ul
 	  (html:li /GD/)
 	  (html:li /GD.pm/)
