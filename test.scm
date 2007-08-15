@@ -343,18 +343,18 @@
        sum
        (let ((s 0))
          (pixel-for-each
+          im
           (lambda (x y pixel)
-            (set! s (+ pixel s)))
-          im)
+            (set! s (+ pixel s))))
          s))
 
 (test* "pixel-fold"
        sum
        (pixel-fold
+        im
         (lambda (x y pixel seed)
           (+ pixel seed))
-        0
-        im))
+        0))
 
 (test-end)
 
