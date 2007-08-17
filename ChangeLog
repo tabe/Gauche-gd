@@ -1,5 +1,7 @@
 2007-08-15  Takeshi Abe  <tabe@fixedpoint.jp>
 
+	* Release 0.2.0.
+
 	* graphics/gd.scm (pixel-for-each, pixel-fold): added.
 
 	* test.scm ("Miscellaneous"): added.
