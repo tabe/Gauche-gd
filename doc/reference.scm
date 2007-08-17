@@ -9,10 +9,10 @@
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
-	((_ ja)
-	 '())
-    ((_ en)
+	((_ en)
      '())
+    ((_ ja)
+	 '())
 	((_ en (synopsis x y z ...) rest ...)
      (cons
       (def (synopsis x z ...))
