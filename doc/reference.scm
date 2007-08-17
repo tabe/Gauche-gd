@@ -5,45 +5,60 @@
 (use text.tree)
 
 (define *version* "0.2.0")
-(define *last-update* "Web Aug 15 2007")
+(define *last-update* "Fri Aug 17 2007")
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
-	((_ lang)
+	((_ ja)
 	 '())
-	((_ en ((type name ...) (p ...) (q ...)) rest ...)
-	 (def en ((type name ...) (p ...)) rest ...))
-	((_ ja ((type name ...) (p ...) (q ...)) rest ...)
-	 (def ja ((type name ...) (q ...)) rest ...))
-	((_ lang ((procedure (name arg ...) ...) (p ...)) rest ...)
-	 (list*
-	  (html:h3 (html:span :class "type" "procedure") ": "
-			   (html:span :class "procedure" (html-escape-string (symbol->string 'name))) " "
-			   (cons (html:span :class "argument" 'arg) " ") ...)
-	  ...
-	  (html:p (html-escape-string p))
-	  ...
-	  (html:hr)
-	  (def lang rest ...)))
-	((_ lang ((method (name arg ...) ...) (p ...)) rest ...)
-	 (list*
+    ((_ en)
+     '())
+	((_ en (synopsis x y z ...) rest ...)
+     (cons
+      (def (synopsis x z ...))
+      (def en rest ...)))
+	((_ ja (synopsis x y z ...) rest ...)
+     (cons
+      (def (synopsis y z ...))
+      (def ja rest ...)))
+	((_ ((procedure (name arg ...) ...) (p ...) z ...))
+     (list
+      (html:h3 (html:span :class "type" "procedure") ": "
+               (html:span :class "procedure" (html-escape-string (symbol->string 'name))) " "
+               (cons (html:span :class "argument" 'arg) " ") ...)
+      ...
+      (map
+       (lambda (x)
+         (if (string? x)
+             (html:p (html-escape-string x))
+             (html:pre (html-escape-string (list-ref '(z ...) x)))))
+       (list p ...))
+      (html:hr)))
+	((_ ((method (name arg ...) ...) (p ...) z ...))
+	 (list
 	  (html:h3 (html:span :class "type" "method") ": "
 			   (html:span :class "method" (html-escape-string (symbol->string 'name))) " "
 			   (cons (html:span :class "argument" (html-escape-string (x->string 'arg))) " ") ...)
 	  ...
-	  (html:p (html-escape-string p))
-	  ...
-	  (html:hr)
-	  (def lang rest ...)))
-	((_ lang ((type name ...) (p ...)) rest ...)
-	 (list*
+      (map
+       (lambda (x)
+         (if (string? x)
+             (html:p (html-escape-string x))
+             (html:pre (html-escape-string (list-ref '(z ...) x)))))
+       (list p ...))
+	  (html:hr)))
+	((_ ((type name ...) (p ...) z ...))
+	 (list
 	  (html:h3 (html:span :class "type" 'type) ": "
 			   (html:span :class 'type (html-escape-string (symbol->string 'name))))
 	  ...
-	  (html:p (html-escape-string p))
-	  ...
-	  (html:hr)
-	  (def lang rest ...)))))
+      (map
+       (lambda (x)
+         (if (string? x)
+             (html:p (html-escape-string x))
+             (html:pre (html-escape-string (list-ref '(z ...) x)))))
+       (list p ...))
+	  (html:hr)))))
 
 (define-macro (c-layer-api lang)
   `(def ,lang
@@ -373,9 +388,21 @@
         ((method (pixel-for-each (im <gd-image>) proc)
                  (pixel-fold (im <gd-image>) proc knil))
          ("pixel-for-each calls 'proc' once for each pixel of image 'im' with arguments: x-coordinate, y-coordinate, and its pixel value obtained by 'gd-image-get-pixel'. Its return value is unspecified."
+          "This allows you to write a filter as:"
+          0
           "pixel-fold calls 'proc' once for each pixel of image 'im' with 4 argumens: x-coordinate, y-coordinate, its pixel value, and the temporary seed, and returns the resulting reduction.")
          ("メソッド pixel-for-each は各ピクセルごとに x 座標、y 座標、および gd-image-get-pixel の値の3つの引数で 'proc' を呼びます。戻り値は不定です。"
-          "メソッド pixel-fold は初期値 knil をもとに、各ピクセルごとに x、y、ピクセル値、およびその時点での畳み込みされた値の4つの引数で 'proc' を呼びます。戻り値は畳み込まれた値です。"))
+          "このメソッドによって次のようなフィルターを書くことができます:"
+          0
+          "メソッド pixel-fold は初期値 knil をもとに、各ピクセルごとに x、y、ピクセル値、およびその時点での畳み込みされた値の4つの引数で 'proc' を呼びます。戻り値は畳み込まれた値です。")
+         "(define-method invert (im <gd-image>)
+  (pixel-for-each im
+                  (lambda (x y pixel)
+                    (gd-image-set-pixel im x y pixel
+                                        (gd-true-color (- 255 (gd-image-red im pixel))
+                                                       (- 255 (gd-image-green im pixel))
+                                                       (- 255 (gd-image-blue im pixel)))))))"
+         )
 		))
 
 (define (document-tree lang)
