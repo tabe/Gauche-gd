@@ -1,5 +1,5 @@
 #!/usr/bin/env gosh
-;; -*- encoding: euc-jp -*-
+;; -*- mode: scheme; coding: euc-jp -*-
 
 (use fixedpoint.package)
 (use fixedpoint.site)
@@ -12,7 +12,7 @@
  (FreeType "http://www.freetype.org/")
  )
 
-(define-package Gauche-gd 2007 8 15)
+(define-package Gauche-gd 2007 11 1)
 
 (define-index Gauche-gd
   (html:p (html:dfn /Gauche-gd/)
@@ -22,6 +22,8 @@
 
   (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "News" "最新情報"))
   (html:ul
+   (html:li "[2007-11-01] " (en/ja "It is confirmed that the current version 0.2.0 runs on Gauche 0.8.12."
+                                   "Gauche 0.8.12 で現在のバージョン 0.2.0 が動作することを確認しました。"))
    (html:li "[2007-08-15] " (en/ja "Release 0.2.0. Methods pixel-for-each and pixel-fold added."
                                    "バージョン 0.2.0 を公開しました。メソッド pixel-for-each および pixel-fold を追加しました。"))
    (html:li "[2007-06-21] " (en/ja "Congratulation! GD 2.0.35 released."
