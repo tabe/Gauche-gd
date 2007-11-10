@@ -36,6 +36,9 @@
 #ifndef GAUCHE_GRAPHICS_GD_H
 #define GAUCHE_GRAPHICS_GD_H
 
+#include <gauche.h>
+#include <gauche/extend.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -57,9 +60,6 @@
 #ifdef HAVE_GDFONTT_H
 #include <gdfontt.h>
 #endif /* HAVE_GDFONTT_H */
-
-#include <gauche.h>
-#include <gauche/extend.h>
 
 SCM_DECL_BEGIN
 

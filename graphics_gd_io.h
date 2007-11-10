@@ -36,13 +36,13 @@
 #ifndef GAUCHE_GRAPHICS_GD_IO_H
 #define GAUCHE_GRAPHICS_GD_IO_H
 
+#include <gauche.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
 #include <gd_io.h>
-
-#include <gauche.h>
 
 SCM_DECL_BEGIN
 
