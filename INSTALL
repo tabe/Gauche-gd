@@ -25,7 +25,7 @@ Distribution Specific
 If you do not have the gd2 library, then:
 # aptitude install libgd2-dev
 
-* Fedora Core 6
+* Fedora 8
 If you do not have the gd2 library, then:
 # yum install gd-devel
 
