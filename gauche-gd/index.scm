@@ -65,6 +65,9 @@
    (html:li (en/ja (list "It requires the " /GD/ "2 library (version 2.0.28 or higher) which has been installed.")
                    (list "また別途 " /GD/ "2 ライブラリ(バージョン 2.0.28 以上)がインストールされている必要があります。"))))
 
+  (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "License" "ライセンス"))
+  (html:p "The BSD License")
+
   (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "Download" "ダウンロード"))
   (*package-download*)
 

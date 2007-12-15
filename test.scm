@@ -279,15 +279,15 @@
  '(("/usr/share/fonts/truetype/kochi/kochi-gothic.ttf"
     "東風"
     ( 29 . 108)
-    (273 . 108)
-    (273 .  59)
+    (270 . 108)
+    (270 .  59)
     ( 29 .  59))
    ("/usr/share/fonts/truetype/sazanami/sazanami-gothic.ttf"
     "さざなみ"
     ( 29 . 108)
-    (273 . 108)
-    (273 .  58)
-    ( 29 .  58))))
+    (270 . 108)
+    (270 .  59)
+    ( 29 .  59))))
 
 (test-section "GIF Animation")
 ; See the explanation on gdImageGifAnimBegin* in http://www.boutell.com/gd/manual2.0.33.html
