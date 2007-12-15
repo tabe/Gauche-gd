@@ -1,2 +1,9 @@
 Read INSTALL to install.
 Send bugs and/or patches to tabe@fixedpoint.jp.
+
+Using scheme-mode in Emacs you may want to add the followings to, say, .emacs:
+(put 'with-gd-image-format 'scheme-indent-function 1)
+(put 'with-ft-font/fg/pt/angle 'scheme-indent-function 4)
+(put 'gif-anim-with 'scheme-indent-function 2)
+(put 'pixel-for-each 'scheme-indent-function 1)
+(put 'pixel-fold 'scheme-indent-function 1)
