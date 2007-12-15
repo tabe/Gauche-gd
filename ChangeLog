@@ -1,3 +1,7 @@
+2007-12-16  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* README: mentioned plists of symbols in scheme-mode.
+
 2007-11-10  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* graphics_gd.h, graphics_gd_io.h: include gauche.h before
