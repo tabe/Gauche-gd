@@ -17,6 +17,9 @@ $ make
 $ make check    # optional
 # make install
 
+Or more simply,
+# gauche-package install Gauche-gd-0.2.0.tgz
+
 
 Distribution Specific
 =====================
