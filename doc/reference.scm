@@ -5,7 +5,7 @@
 (use text.tree)
 
 (define *version* "0.2.0")
-(define *last-update* "Fri Aug 17 2007")
+(define *last-update* "Tue Dec 18 2007")
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
@@ -306,9 +306,13 @@
 
 		((constant *gd-features*)
 		 ("A list of symbols which mean available features of GD."
-		  "Possible symbols in the list: fontconfig freetype gif jpeg png xpm.")
+		  "Possible symbols in the list: fontconfig freetype gif jpeg png xpm."
+          "You can also use feature identifiers of form 'gauche.ext.graphics.gd.*' with cond-expand."
+          "Note that they are available after loading the module.")
 		 ("有効な GD の機能を表すシンボルのリスト。"
-		  "このリストに含まれる可能性のあるシンボルは以下の通り: fontconfig freetype gif jpeg png xpm。"))
+		  "このリストに含まれる可能性のあるシンボルは以下の通り: fontconfig freetype gif jpeg png xpm。"
+          "また 'gauche.ext.graphics.gd.*' という形の feature indentifiers を cond-expand とともに使うこともできます。"
+          "これらの identifiers はモジュールのロード後に利用できます。"))
 
 		((parameter current-gd-image-format)
 		 ("It is expected to keep a symbol which decides the image format taken with \"read-gd-image\" and/or \"write\" unless specified.")

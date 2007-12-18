@@ -1,3 +1,10 @@
+2007-12-18  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* graphics_gd.c (Scm_Init_graphics_gd): added feature identifiers
+	of form 'gauche.ext.graphics.gd.*' which are available after
+	loading the module.
+	* test.scm: use cond-expand instead of if.
+
 2007-12-16  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* README: mentioned plists of symbols in scheme-mode.

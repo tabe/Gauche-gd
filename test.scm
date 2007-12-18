@@ -7,10 +7,13 @@
 (use gauche.version)
 
 (test-start "graphics.gd")
+
 (use graphics.gd)
 (test-module 'graphics.gd)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "constant")
+
 (define-syntax test*-constant
   (syntax-rules ()
     ((_ (name value) ...)
@@ -66,8 +69,11 @@
  (GD_RESOLUTION      96)
  )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "parameter")
+
 (use gauche.parameter)
+
 (test* "current-gd-image-format" #t (and (is-a? current-gd-image-format <parameter>)
                                          (eq? 'gif (current-gd-image-format))))
 (test* "current-ft-font" #t (and (is-a? current-ft-font <parameter>) (not (current-ft-font))))
@@ -75,7 +81,9 @@
 (test* "current-ft-pt" 12 (and (is-a? current-ft-pt <parameter>) (current-ft-pt)))
 (test* "current-ft-angle" 0 (and (is-a? current-ft-angle <parameter>) (current-ft-angle)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "color")
+
 (define color #x789abcde)
 (test* "gd-true-color-get-alpha" #x78 (gd-true-color-get-alpha color))
 (test* "gd-true-color-get-red"   #x9a (gd-true-color-get-red   color))
@@ -85,7 +93,9 @@
        (if (version<=? "2.0.29" *gd-version*) 33440629 33309300)
        (gd-alpha-blend #x11ee3355 #x09ff4477))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "gdImage")
+
 (define im (gd-image-create 240 240))
 (test* "gd-image-create" #t (is-a? im <gd-image>))
 (define im (gd-image-create-palette 240 240))
@@ -106,9 +116,11 @@
     (gd-image-copy-resampled dst im 0 0 0 0 sx sy (gd-image-sx im) (gd-image-sy im))
     dst))
 (define im-small (resize im 97 74))
-(save-as im-small (if (memq 'png *gd-features*)
-                      "test/screen-thumb.png"
-                      "test/screen-thumb.gif"))
+(save-as im-small (cond-expand
+                   (gauche.ext.graphics.gd.png
+                    "test/screen-thumb.png")
+                   (else
+                    "test/screen-thumb.gif")))
 (destroy! im-small)
 (define im-empty (gd-image-create-from-jpeg "test/empty.jpg")) ;; may put a message
 (test* "gd-image-create-from-jpeg" #f im-empty)
@@ -140,25 +152,31 @@
 (gd-font-cache-shutdown)
 (gd-free-font-cache)
 (test* "gd-ft-use-font-config"
-       (if (memq 'fontconfig *gd-features*) 1 0)
+       (cond-expand (gauche.ext.graphics.gd.fontconfig 1) (else 0))
        (gd-ft-use-font-config 1))
 (gd-image-interlace im0 1)
 (gd-image-arc im0 160 120 40 40 0 270 green)
-(save-as im0 (if (memq 'png *gd-features*)
-                 "test/im0.png"
-                 "test/im0.gif"))
+(save-as im0 (cond-expand
+              (gauche.ext.graphics.gd.png
+               "test/im0.png")
+              (else
+               "test/im0.gif")))
 (define im-lambda (gd-image-create-from-xbm "test/lambda.xbm"))
 (test* "gd-image-create-from-xbm" #t (begin0
                                        (is-a? im-lambda <gd-image>)
                                        (save-as im-lambda "test/lambda.gif")))
 (save-as im-lambda "test/lambda.wbmp" 'wbmp :foreground 0) ; test the WBMP foreground option
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "gdIOCtx compatible port")
+
 (test* "type error (input port)" *test-error* (read-gd-image #f))
 (test* "type error (output port)" *test-error* (write-as im0 'gif #f))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "read & write")
-(current-gd-image-format (if (memq 'png *gd-features*) 'png 'gif))
+
+(current-gd-image-format (cond-expand (gauche.ext.graphics.gd.png 'png) (else 'gif)))
 (define im1
   (call-with-input-file (format #f "test/im0.~a" (current-gd-image-format))
     (lambda (iport)
@@ -170,7 +188,8 @@
   (lambda (oport)
     (write im2 oport))) ; it also test `write-as'
 (use file.util)
-(when (memq 'jpeg *gd-features*)
+(cond-expand
+ (gauche.ext.graphics.gd.jpeg
   (test* "the JPEG quality option"
          #t
          (let ((f0 "test/screen-high.jpg")
@@ -181,6 +200,7 @@
              (cut write-as im 'jpeg <> :quality 0))
            (< (file-size f1) (file-size f0))))
   )
+ (else))
 (let ((f0 "test/screen-compressed0.gd2")
       (f1 "test/screen-compressed1.gd2")
       (f2 "test/screen-raw.gd2"))
@@ -204,7 +224,9 @@
                  (get-height im))))
   )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "gdFont")
+
 (define *font-giant* (gd-font-get-giant))
 (test* "gd-font-get-giant" #t (or (is-a? *font-giant* <gd-font>) (not *font-giant*)))
 (define *font-large* (gd-font-get-large))
@@ -216,7 +238,9 @@
 (define *font-tiny* (gd-font-get-tiny))
 (test* "gd-font-get-tiny" #t (or (is-a? *font-tiny* <gd-font>) (not *font-tiny*)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "gd-image-char / gd-image-char-up")
+
 (let* ((im (gd-image-create 40 100))
        (white (gd-image-color-allocate im #xff #xff #xff))
        (black (gd-image-color-allocate im 0 0 0)))
@@ -232,7 +256,9 @@
   (A/a *font-tiny* 80)
   (save-as im "test/a.gif"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "gd-image-string / gd-image-string-up")
+
 (let* ((im (gd-image-create 500 100))
        (white (gd-image-color-allocate im #xff #xff #xff))
        (black (gd-image-color-allocate im 0 0 0))
@@ -244,7 +270,9 @@
     (gd-image-string-up im *font-small* 0 95 "George A. Moore" red))
   (save-as im "test/string.gif"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "gd-image-string-ft")
+
 (use srfi-1)          ;; for first, second, ...
 (use gauche.sequence) ;; for for-each-with-index
 (for-each-with-index
@@ -289,7 +317,9 @@
     (270 .  59)
     ( 29 .  59))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "GIF Animation")
+
 ; See the explanation on gdImageGifAnimBegin* in http://www.boutell.com/gd/manual2.0.33.html
 (define im (gd-image-create 100 100))
 (define white (gd-image-color-allocate im 255 255 255))
@@ -319,11 +349,48 @@
      )))
 (test* "gif-anim-with" #t (is-a? (call-with-input-file "test/anim.gif" (cut read-gd-image <> 'gif)) <gd-image>))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "GD Features")
+
 (format #t "*gd-features*: ~s\n" *gd-features*)
+
+(cond-expand
+ (gauche.ext.graphics.gd.xpm
+  (test* "gauche.ext.graphics.gd.xpm" #t #t))
+ (else
+  (test* "gauche.ext.graphics.gd.xpm" #f #f)))
+(cond-expand
+ (gauche.ext.graphics.gd.png
+  (test* "gauche.ext.graphics.gd.png" #t #t))
+ (else
+  (test* "gauche.ext.graphics.gd.png" #f #f)))
+(cond-expand
+ (gauche.ext.graphics.gd.jpeg
+  (test* "gauche.ext.graphics.gd.jpeg" #t #t))
+ (else
+  (test* "gauche.ext.graphics.gd.jpeg" #f #f)))
+(cond-expand
+ (gauche.ext.graphics.gd.gif
+  (test* "gauche.ext.graphics.gd.gif" #t #t))
+ (else
+  (test* "gauche.ext.graphics.gd.gif" #f #f)))
+(cond-expand
+ (gauche.ext.graphics.gd.freetype
+  (test* "gauche.ext.graphics.gd.freetype" #t #t))
+ (else
+  (test* "gauche.ext.graphics.gd.freetype" #f #f)))
+(cond-expand
+ (gauche.ext.graphics.gd.fontconfig
+  (test* "gauche.ext.graphics.gd.fontconfig" #t #t))
+ (else
+  (test* "gauche.ext.graphics.gd.fontconfig" #f #f)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "GD Version")
+
 (format #t "*gd-version*: ~s\n" *gd-version*)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-section "Miscellaneous")
 
 (define im (gd-image-create-from-gif "test/screen.gif"))

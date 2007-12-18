@@ -590,11 +590,12 @@ graphicsGdGetVersion(void)
 ScmObj
 Scm_Init_graphics_gd(void)
 {
+  const char *module_name = "graphics.gd";
   ScmModule *mod;
 
   SCM_INIT_EXTENSION(graphics_gd);
 
-  mod = SCM_MODULE(SCM_FIND_MODULE("graphics.gd", TRUE));
+  mod = SCM_MODULE(SCM_FIND_MODULE(module_name, TRUE));
 
   GraphicsGdImageClass =
 	Scm_MakeForeignPointerClass(mod, "<gd-image>",
@@ -606,4 +607,24 @@ Scm_Init_graphics_gd(void)
   sym_destroyed = SCM_INTERN("destroyed?");
 
   Scm_Init_graphics_gdlib(mod);
+
+  /* the following feature identifiers are available *after* loading. */
+#ifdef GD_XPM
+  Scm_AddFeature("gauche.ext.graphics.gd.xpm", module_name);
+#endif /* GD_XPM */
+#ifdef GD_PNG
+  Scm_AddFeature("gauche.ext.graphics.gd.png", module_name);
+#endif /* GD_PNG */
+#ifdef GD_JPEG
+  Scm_AddFeature("gauche.ext.graphics.gd.jpeg", module_name);
+#endif /* GD_JPEG */
+#ifdef GD_GIF
+  Scm_AddFeature("gauche.ext.graphics.gd.gif", module_name);
+#endif /* GD_GIF */
+#ifdef GD_FREETYPE
+  Scm_AddFeature("gauche.ext.graphics.gd.freetype", module_name);
+#endif /* GD_FREETYPE */
+#ifdef GD_FONTCONFIG
+  Scm_AddFeature("gauche.ext.graphics.gd.fontconfig", module_name);
+#endif /* GD_FONTCONFIG */
 }
