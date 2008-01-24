@@ -77,23 +77,23 @@ uninstall :
 	$(INSTALL) -m 444 -U $(SCM_INSTALL_DIR)/.packages $(PACKAGE).gpd
 
 clean :
-	cd doc && $(MAKE) clean
-	cd example && $(MAKE) clean
+	$(MAKE) -C doc clean
+	$(MAKE) -C example clean
 	$(GAUCHE_PACKAGE) compile --clean graphics_gd $(graphics_gd_SRCS)
 	rm -rf core *~ $(TARGET) $(GENERATED) $(TEST_GENERATED) so_locations
 
 distclean : clean
-	cd doc && $(MAKE) distclean
-	cd example && $(MAKE) distclean
+	$(MAKE) -C doc distclean
+	$(MAKE) -C example distclean
 	rm -rf $(CONFIG_GENERATED)
 
 maintainer-clean : clean
-	cd doc && $(MAKE) maintainer-clean
-	cd example && $(MAKE) maintainer-clean
+	$(MAKE) -C doc maintainer-clean
+	$(MAKE) -C example maintainer-clean
 	rm -rf $(CONFIG_GENERATED) configure
 
 doc : all
-	cd doc && $(MAKE) doc
+	$(MAKE) -C doc doc
 
 example: all
-	cd example && $(MAKE) example
+	$(MAKE) -C example example
