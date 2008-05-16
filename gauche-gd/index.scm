@@ -71,7 +71,7 @@
   (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "Download" "ダウンロード"))
   (*package-download*)
 
-  (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "Documents" "文書"))
+  (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "Documentation" "文書"))
   (html:ul
    (html:li (html:a :href (en/ja "reference.en.html" "reference.ja.html")
                     "Gauche-gd " (en/ja "Reference Manual" "リファレンスマニュアル"))))
@@ -79,8 +79,8 @@
   (html:h2 :style "border-bottom: 1px solid #bbbbbb;" "FYI")
   (html:ul
    (html:li /GD/)
-   (html:li /GD.pm/)
    (html:li (html:a :href "http://php.net/image" "PHP: Image Functions"))
+   (html:li /GD.pm/)
    (html:li (html:a :href "http://newcenturycomputers.net/projects/gdmodule.html" "gdmodule - Python GD module"))
    (html:li (html:a :href "http://raa.ruby-lang.org/project/ruby-gd/" "ruby-gd"))
    (html:li /GD/Scheme/)
