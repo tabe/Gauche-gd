@@ -18,7 +18,7 @@ $ make check    # optional
 # make install
 
 Or more simply,
-# gauche-package install Gauche-gd-0.2.0.tgz
+# gauche-package install Gauche-gd-0.3.0.tgz
 
 
 Distribution Specific
@@ -28,7 +28,7 @@ Distribution Specific
 If you do not have the gd2 library, then:
 # aptitude install libgd2-dev
 
-* Fedora 8
+* Fedora 9
 If you do not have the gd2 library, then:
 # yum install gd-devel
 

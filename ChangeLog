@@ -1,5 +1,7 @@
 2008-07-17  Takeshi Abe  <tabe@fixedpoint.jp>
 
+	* Release 0.3.0.
+
 	* graphics_gd.c (graphicsGdImageStringFT): use ScmString for the 7th argument.
 	* graphics_gdlib.stub (gd-image-string-ft): ditto.
 
