@@ -531,11 +531,12 @@ graphicsGdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, const char *s,
 int
 graphicsGdImageStringFT(gdImage *im,
 						ScmPair **brect0, ScmPair **brect1, ScmPair **brect2, ScmPair **brect3,
-						int fg, char *fontlist, double ptsize, double angle, int x, int y, ScmString *str)
+						int fg, ScmString *fontlist, double ptsize, double angle, int x, int y, ScmString *str)
 {
   int brect[8];
   char *s = Scm_GetString(str);
-  char *e = gdImageStringFT(im, brect, fg, fontlist, ptsize, angle, x, y, s);
+  char *fl = Scm_GetString(fontlist);
+  char *e = gdImageStringFT(im, brect, fg, fl, ptsize, angle, x, y, s);
   if (e == NULL) {
 	*brect0 = SCM_NEW(ScmPair);
 	SCM_SET_CAR(*brect0, Scm_MakeInteger(brect[0]));
@@ -586,6 +587,11 @@ graphicsGdGetVersion(void)
 {
   return GDLIB_VERSION;
 }
+
+/*
+ * Module initialization function.
+ */
+extern void Scm_Init_graphics_gdlib(ScmModule*);
 
 ScmObj
 Scm_Init_graphics_gd(void)

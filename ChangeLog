@@ -1,3 +1,10 @@
+2008-07-17  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* graphics_gd.c (graphicsGdImageStringFT): use ScmString for the 7th argument.
+	* graphics_gdlib.stub (gd-image-string-ft): ditto.
+
+	* graphics_gd.h: added missing declarations.
+
 2007-12-18  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* graphics_gd.c (Scm_Init_graphics_gd): added feature identifiers

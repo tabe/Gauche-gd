@@ -73,6 +73,53 @@ extern ScmClass *GraphicsGdFontClass;
 #define GRAPHICS_GD_FONT_UNBOX(obj) SCM_FOREIGN_POINTER_REF(gdFont *, obj)
 #define GRAPHICS_GD_FONT_BOX(ctx)   Scm_MakeForeignPointer(GraphicsGdFontClass, ctx)
 
+int graphicsGdImageDestroyedP(ScmObj obj);
+void graphicsGdImageMarkDestroyed(ScmObj obj);
+
+int graphicsGdImageCreateFromPng(gdImage **dst, const char *path);
+int graphicsGdImageCreateFromGif(gdImage **dst, const char *path);
+int graphicsGdImageCreateFromJpeg(gdImage **dst, const char *path);
+int graphicsGdImageCreateFromWBMP(gdImage **dst, const char *path);
+int graphicsGdImageCreateFromGd(gdImage **dst, const char *path);
+int graphicsGdImageCreateFromGd2(gdImage **dst, const char *path);
+int graphicsGdImageCreateFromGd2Part(gdImage **dst, const char *path, int srcx, int srcy, int w, int h);
+int graphicsGdImageCreateFromXbm(gdImage **dst, const char *path);
+int graphicsGdImageCreateFromXpm(gdImage **dst, const char *path);
+int graphicsGdImageCreatePngPort(gdImage **dst, ScmPort *port);
+int graphicsGdImageCreateGifPort(gdImage **dst, ScmPort *port);
+int graphicsGdImageCreateJpegPort(gdImage **dst, ScmPort *port);
+int graphicsGdImageCreateWBMPPort(gdImage **dst, ScmPort *port);
+int graphicsGdImageCreateGdPort(gdImage **dst, ScmPort *port);
+int graphicsGdImageCreateGd2Port(gdImage **dst, ScmPort *port);
+int graphicsGdImageCreateGd2PartPort(gdImage **dst, ScmPort *port, int srcx, int srcy, int w, int h);
+void graphicsGdImageWriteAsJpeg(gdImage *im, ScmPort *port, int quality);
+void graphicsGdImageWriteAsWBMP(gdImage *im, int fg, ScmPort *port);
+void graphicsGdImageWriteAsPng(gdImage *im, ScmPort *port);
+void graphicsGdImageWriteAsGif(gdImage *im, ScmPort *port);
+int graphicsGdImageSaveAsJpeg(gdImage *im, const char *path, int quality);
+int graphicsGdImageSaveAsWBMP(gdImage* im, int fg, const char *path);
+int graphicsGdImageSaveAsPng(gdImage *im, const char *path);
+int graphicsGdImageSaveAsGif(gdImage *im, const char *path);
+int graphicsGdImageSaveAsGd(gdImage *im, const char *path);
+int graphicsGdImageSaveAsGd2(gdImage* im, const char *path, int chunkSize, int fmt);
+void graphicsGdImageGifAnimBeginPort(gdImage *im, ScmPort *oport, int GlobalCM, int loops);
+void graphicsGdImageGifAnimAddPort(gdImage *im, ScmPort *oport, int localCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImage *previm);
+void graphicsGdImageGifAnimEndPort(ScmPort *oport);
+void graphicsGdImagePolygon(gdImage *im, ScmObj points, int pointsTotal, int color);
+void graphicsGdImageOpenPolygon(gdImage *im, ScmObj points, int pointsTotal, int color);
+void graphicsGdImageFilledPolygon(gdImage *im, ScmObj points, int pointsTotal, int color);
+void graphicsGdImageSetStyle(gdImage *im, ScmObj style, int styleLength);
+int graphicsGdFontGetGiant(gdFont **dst);
+int graphicsGdFontGetLarge(gdFont **dst);
+int graphicsGdFontGetMediumBold(gdFont **dst);
+int graphicsGdFontGetSmall(gdFont **dst);
+int graphicsGdFontGetTiny(gdFont **dst);
+void graphicsGdImageString(gdImagePtr im, gdFontPtr f, int x, int y, const char *s, int color);
+void graphicsGdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, const char *s, int color);
+int graphicsGdImageStringFT(gdImage *im,
+							ScmPair **brect0, ScmPair **brect1, ScmPair **brect2, ScmPair **brect3,
+							int fg, ScmString *fontlist, double ptsize, double angle, int x, int y, ScmString *str);
+
 ScmObj graphicsGdGetFeatures(void);
 const char *graphicsGdGetVersion(void);
 
