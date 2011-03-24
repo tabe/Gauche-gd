@@ -1,7 +1,7 @@
 ;;;
 ;;;  gd.scm
 ;;;
-;;;   Copyright (c) 2006-2008 Takeshi Abe. All rights reserved.
+;;;   Copyright (c) 2006-2011 Takeshi Abe. All rights reserved.
 ;;;
 ;;;   Redistribution and use in source and binary forms, with or without
 ;;;   modification, are permitted provided that the following conditions
@@ -75,7 +75,7 @@
           gd-image-copy-resized gd-image-copy-resampled gd-image-copy-rotated
           gd-image-set-brush gd-image-set-tile
           gd-image-set-anti-aliased gd-image-set-anti-aliased-dont-blend
-          gd-image-set-thickness gd-image-interlace gd-image-alpha-blending gd-image-save-alpha
+          gd-image-set-style gd-image-set-thickness gd-image-interlace gd-image-alpha-blending gd-image-save-alpha
           gd-image-true-color gd-image-sx gd-image-sy
           gd-image-colors-total gd-image-red gd-image-green gd-image-blue gd-image-alpha
           gd-image-get-transparent gd-image-get-interlaced

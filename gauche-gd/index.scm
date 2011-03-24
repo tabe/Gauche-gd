@@ -12,7 +12,7 @@
  (FreeType "http://www.freetype.org/")
  )
 
-(define-package Gauche-gd 2008 10 20)
+(define-package Gauche-gd 2011 3 24)
 
 (define-index Gauche-gd
   (html:p (html:dfn /Gauche-gd/)
@@ -22,6 +22,10 @@
 
   (html:h2 :style "border-bottom: 1px solid #bbbbbb;" (en/ja "News" "最新情報"))
   (html:ul
+   (html:li "[2011-03-24] " (en/ja "Maintainance release 0.3.1 for Gauche 0.9.1. Export procedure 'gd-image-set-style'."
+                                   "Gauche 0.9.1 向けのバージョン 0.3.1 を公開しました。手続き 'gd-image-set-style' が API に加わりました。"))
+   (html:li "[2009-11-23] " (en/ja "It is confirmed that the current version 0.3.0 runs on Gauche 0.9."
+                                   "Gauche 0.9 で現在のバージョン 0.3.0 が動作することを確認しました。"))
    (html:li "[2008-10-20] " (en/ja "It is confirmed that the current version 0.3.0 runs on Gauche 0.8.14."
                                    "Gauche 0.8.14 で現在のバージョン 0.3.0 が動作することを確認しました。"))
    (html:li "[2008-07-17] " (en/ja "Release 0.3.0 for Gauche 0.8.13. Feature indentifiers of form 'gauche.ext.graphics.gd.*'."

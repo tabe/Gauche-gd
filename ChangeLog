@@ -1,3 +1,10 @@
+2011-03-24  Takeshi Abe  <tabe@fixedpoint.jp>
+
+	* Release 0.3.1.
+
+	* graphics/gd.scm (graphics.gd): export gd-image-set-style,
+	pointed out by valvallow <valvalloooooooooow@gmail.com>.
+
 2008-07-17  Takeshi Abe  <tabe@fixedpoint.jp>
 
 	* Release 0.3.0.

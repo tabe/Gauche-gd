@@ -18,21 +18,23 @@ $ make check    # optional
 # make install
 
 Or more simply,
-# gauche-package install Gauche-gd-0.3.0.tgz
+# gauche-package install Gauche-gd-0.3.1.tgz
 
 
 Distribution Specific
 =====================
 
-* Debian (etch)
+* Debian (squeeze)
 If you do not have the gd2 library, then:
-# aptitude install libgd2-dev
+# aptitude install libgd2-noxpm-dev
+or
+# aptitude install libgd2-xpm-dev
 
-* Fedora 9
+* Fedora 14
 If you do not have the gd2 library, then:
 # yum install gd-devel
 
-* FreeBSD 6.2
+* FreeBSD 8.2
 # cd /usr/ports/graphics/gd
 # make install clean
 Also available: /usr/ports/japanese/gd.

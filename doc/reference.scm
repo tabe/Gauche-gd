@@ -4,8 +4,8 @@
 (use text.html-lite)
 (use text.tree)
 
-(define *version* "0.3.0")
-(define *last-update* "Tue Dec 18 2007")
+(define *version* "0.3.1")
+(define *last-update* "Thu Mar 24 2011")
 
 (define-syntax def
   (syntax-rules (en ja procedure method)
@@ -247,8 +247,8 @@
 		("それぞれ gdImageSetBrush, gdImageSetTile, gdImageSetAntiAliased, gdImageSetAntiAliasedDontBlend, gdImageSetThickness, gdImageInterlace, gdImageAlphaBlending, gdImageSaveAlpha に対応します。"))
 
 		((procedure (gd-image-set-style im style styleLength))
-		 ("")
-		 (""))
+		 ("Given style as a list, call gdImageSetStyle.")
+		 ("style をリストとして与えることで gdImageSetStyle を呼びます。"))
 
  	   ((procedure (gd-image-true-color im))
 		("It returns 0 for a palette image, otherwise non-0.")
@@ -445,7 +445,7 @@
 	  (if (eq? 'en lang)
 		  (simple-api en)
 		  (simple-api ja))
-	  (html:address "&copy; 2006,2007 Takeshi Abe")
+	  (html:address "&copy; 2006-2011 Takeshi Abe")
 	  ))))
 
 (define (main args)
